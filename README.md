@@ -9,10 +9,15 @@
 #### 使用说明
 
 . setup.sh
+
 mkdir build
+
 cd build 
+
 cmake ..
+
 make 
+
 第一次编译需要联网下载对应的开源代码编译，根据你使用的库可能需要比较长的编译时间请耐心等待，如果有任何错误也欢迎登录 [issues](https://gitee.com/qq2820/puppy/issues "With a Title")提出。
 
 #### cmake说明
