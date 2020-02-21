@@ -6,6 +6,7 @@
 ![输入图片说明](https://gitee.com/qq2820/puppy/blob/master/builder/clion.png "在这里输入图片标题")
 目前支持ubuntu18系统，其他系统没有测试，可能有错误如果有错误欢迎在 [issues](https://gitee.com/qq2820/puppy/issues "With a Title")里提出。
 
+编译工程需要QT的支持可以前往 [下载QT](http://iso.mirrors.ustc.edu.cn/qtproject/archive/qt/5.14/5.14.1/qt-opensource-linux-x64-5.14.1.run),安装完毕之后修改[common.cmake中定义的QT_ROOT](https://gitee.com/qq2820/puppy/blob/master/builder/cmake/common.cmake)
 #### 使用说明
 
 . setup.sh
