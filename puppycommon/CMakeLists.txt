@@ -1,2 +1,2 @@
-set(DEPENDS rttr rapidjson)
+set(DEPENDS rttr rapidjson xerces-c)
 include(library)
