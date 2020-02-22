@@ -22,10 +22,11 @@
 # SOFTWARE.
 
 include(${CMAKE_CURRENT_LIST_DIR}/common.cmake)
-
+#如果有源码文件就编译成动态库，否则不创建动态库
 if ("${SRCS_LENGTH}" GREATER 0)
     message(STATUS "create dynamic library ${PROJECT_NAME}")
     list(LENGTH QT_LIBS QT_LIBS_LEN)
+    #如果发现QT依赖使用 automoc autouic编译。
     if (${QT_LIBS_LEN} GREATER 0)
         find_package(Qt5Core REQUIRED)
 

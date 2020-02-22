@@ -21,7 +21,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-
+#解析子目录的CMakeLists文件里定义的DEPENDS，根据依赖调用add_subdirectory()
 file(GLOB SUBDIRS RELATIVE ${PROJECT_SOURCE_DIR}/ *)
 set(SUB_DIRECOTRIES)
 message(STATUS " SUBDIRS ${SUBDIRS}")
@@ -30,11 +30,6 @@ foreach (_dir IN ITEMS ${SUBDIRS})
         list(APPEND SUB_DIRECOTRIES ${_dir})
         set(${_dir}_DEP_SUBDIRS)
         FILE(READ "${PROJECT_SOURCE_DIR}/${_dir}/CMakeLists.txt" contents)
-        #        foreach (_line IN ITEMS ${contents})
-        #            message(STATUS "line  ${_line}")
-        #        endforeach ()
-        #        string(REGEX MATCH "\\(\\a\\+b\\)" RESULT ${contents})
-        #
         string(FIND ${contents} "set(DEPENDS" out)
         string(LENGTH ${contents} _len)
         if (NOT ${out} EQUAL -1)

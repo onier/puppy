@@ -21,20 +21,30 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+#CMP0087 NEW用于指定ExternalProject_Add 默认不更新任何git子模块，必须依赖3.15版本。
 cmake_policy(SET CMP0097 NEW)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -pthread")
+
+#编译的库和进程的输出目录
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/out/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/out/bin)
+
+#开源代码的库路径和头文件路径
 set(OSS_PREFIX_LIB_PATH ${OSS_PREFIX_PATH}/lib)
 set(OSS_PREFIX_INC_PATH ${OSS_PREFIX_PATH}/include)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/Modules ${CMAKE_MODULE_PATH})
+
+#qt的安装目录
 set(QT_ROOT /opt/Qt5.14.1/5.14.1/gcc_64/)
 set(Qt5Core_DIR ${QT_ROOT}/lib/cmake/Qt5Core)
 set(Qt5_DIR ${QT_ROOT}/lib/cmake/Qt5)
 set(QT_QMAKE_EXECUTABLE ${QT_ROOT}/bin/qmake)
 set(CMAKE_PREFIX_PATH ${QT_ROOT}/lib/cmake)
 
+#添加当前项目的include
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
+
+#获取当前项目的目录文件名
 get_filename_component(ProjectId ${CMAKE_CURRENT_SOURCE_DIR} NAME)
 string(REPLACE " " "_" ProjectId ${ProjectId})
 project(${ProjectId})
@@ -49,6 +59,8 @@ set(${PROJECT_NAME}_DEP_TARGETS)
 set(${PROJECT_NAME}_DEP_LIBRARY_DIRS)
 set(${PROJECT_NAME}_DEP_INCLUDE_DIRS)
 find_package(PkgConfig)
+
+#遍历依赖关系，如果不是源码编译目录或者是pkgconfig找到的依赖，那么就会调用add_xxx.cmake添加依赖，并将这些库依赖关系加到对应的变量中区。
 if (PKGCONFIG_FOUND)
     foreach (_dep IN ITEMS ${DEPENDS})
         string(LENGTH "${_dep}" _dep_len)
@@ -78,4 +90,6 @@ if (PKGCONFIG_FOUND)
         endif ()
     endforeach ()
 endif ()
+
+#添加依赖头文件路径
 include_directories(${${PROJECT_NAME}_DEP_INCLUDE_DIRS})
