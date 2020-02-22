@@ -38,6 +38,7 @@ RTTR_REGISTRATION {
             .property("ints", &DataObject::ints)
             .property("bean", &DataObject::bean)
             .property("rs", &DataObject::rs)
+            .property("alignment", &DataObject::alignment)
             .property("map1", &DataObject::map1)
             .property("map2", &DataObject::map2)
             .property("map3", &DataObject::map3)
@@ -55,4 +56,12 @@ RTTR_REGISTRATION {
             .property("c", &Bean::c)
             .property("d", &Bean::d)
             .property("result", &Bean::name);
+
+    rttr::registration::enumeration<Alignment>("Alignment")
+            (
+                    rttr::value("AlignLeft", Alignment::AlignLeft),
+                    rttr::value("AlignRight", Alignment::AlignRight),
+                    rttr::value("AlignHCenter", Alignment::AlignHCenter),
+                    rttr::value("AlignJustify", Alignment::AlignJustify)
+            );
 }

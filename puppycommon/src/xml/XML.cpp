@@ -265,6 +265,9 @@ void parseInstance(xercesc::DOMNode *node, rttr::instance obj2) {
         } else if (prop.get_name() == "value") {
             prop.set_value(obj, toStr(node->getTextContent()));
             //字符串或者数字类型直接设置
+        } else if (prop.get_type().is_enumeration()) {
+            std::string valueText = attributeValue(node->getAttributes(), "alignment");
+            prop.set_value(obj, prop.get_enumeration().name_to_value(valueText));
         } else if (prop.get_type().get_raw_type().get_name() == "std::string" || prop.get_type().is_arithmetic()) {
             auto typeName = prop.get_type().get_raw_type().get_name();
             xercesc::DOMNamedNodeMap *nodeMap = node->getAttributes();
@@ -429,7 +432,8 @@ void createElement(rttr::instance obj2, xercesc::DOMElement *domElement, xercesc
             std::string string = prop.get_value(variant).to_string();
             if (!string.empty())
                 domElement->setTextContent(XStr(prop.get_value(variant).to_string().data()));
-        } else if (prop.get_type().get_raw_type().get_name() == "std::string" || prop.get_type().is_arithmetic()) {
+        } else if (prop.get_type().get_raw_type().get_name() == "std::string" || prop.get_type().is_arithmetic() ||
+                   prop.get_type().is_enumeration()) {
             auto value = prop.get_value(variant).to_string();
             if (!value.empty())
                 domElement->setAttribute(XStr(prop.get_name().data()),

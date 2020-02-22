@@ -79,6 +79,7 @@ void testJson() {
     std::string text = puppy::common::JSON::toJSONString(parameter);
     DataObject parameter1;
     puppy::common::JSON::parseJSON(text, parameter1);
+    parameter1.alignment = Alignment::AlignLeft;
     text = puppy::common::JSON::toJSONString(parameter1);
     LOG(INFO) << text;
 }
@@ -145,6 +146,7 @@ void testXML() {
     parameter.map2.insert({b1, b1});
     parameter.map2.insert({b2, b2});
     parameter.map2.insert({b3, b3});
+    parameter.alignment = Alignment::AlignHCenter;
     std::string text = puppy::common::XML::toXMLString(parameter);
     LOG(INFO) << text;
     auto result = puppy::common::XML::parseXML(text);
@@ -154,6 +156,6 @@ void testXML() {
 }
 
 int main() {
-    testJson();
+//    testJson();
     testXML();
 }

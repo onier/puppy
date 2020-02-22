@@ -29,6 +29,13 @@ SOFTWARE.
 #include "vector"
 #include "map"
 
+enum class Alignment {
+    AlignLeft = 0x0001,
+    AlignRight = 0x0002,
+    AlignHCenter = 0x0004,
+    AlignJustify = 0x0008
+};
+
 class DataObject {
 public:
     std::string name;
@@ -39,14 +46,14 @@ public:
     Bean bean;
     std::vector<Bean> rs;
     std::map<std::string, double> map1;
-    std::map<std::string, std::string > map3;
-    std::map<int, std::string > map4;
+    std::map<std::string, std::string> map3;
+    std::map<int, std::string> map4;
     std::map<Bean, Bean> map2;
+    Alignment alignment;
 
     DataObject();
 
 RTTR_ENABLE()
 };
-
 
 #endif //PUPPY_DATAOBJECT_H

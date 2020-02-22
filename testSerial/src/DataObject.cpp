@@ -27,4 +27,5 @@ SOFTWARE.
 DataObject::DataObject() {
     name = "";
     age = -1;
+    alignment = Alignment::AlignJustify;
 }
