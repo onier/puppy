@@ -234,8 +234,8 @@ int main(int argc, char *argv[]) {
     bean.d = true;
     bean.name = "test";
     DataObject dataObject;
-//    QRTTRTableModel *_tableModel = new QRTTRTableModel(bean);
-    QRTTRTableModel *_tableModel = new QRTTRTableModel(dataObject);
+    QRTTRTableModel *_tableModel = new QRTTRTableModel(bean);
+//    QRTTRTableModel *_tableModel = new QRTTRTableModel(dataObject);
     tableView.setModel(_tableModel);
     tableView.setItemDelegate(new RTTRItemDelegate(_tableModel));
     tableView.show();

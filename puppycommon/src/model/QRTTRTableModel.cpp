@@ -280,10 +280,8 @@ void RTTRItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
             edit.setFixedHeight(option.rect.height());
 
             if (option.state & QStyle::State_Selected) {
-                QPalette p = edit.palette();
-                p.setColor(edit.foregroundRole(), Qt::white);
-                p.setColor(QPalette::Active, QPalette::Base, QColor(48, 140, 198));
-                edit.setPalette(p);
+                edit.setStyleSheet(
+                        "QComboBox { border: 0px solid red; background-color: rgba(48, 140, 198,255); } QFrame { border: 0px solid blue; } ");
             }
             QPixmap pixmap = edit.grab({0, 0, option.rect.width(), option.rect.height()});
             painter->drawPixmap(option.rect, pixmap);
@@ -294,10 +292,8 @@ void RTTRItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
             edit.setFixedHeight(option.rect.height());
 
             if (option.state & QStyle::State_Selected) {
-                QPalette p = edit.palette();
-                p.setColor(edit.foregroundRole(), Qt::white);
-                p.setColor(QPalette::Active, QPalette::Base, QColor(48, 140, 198));
-                edit.setPalette(p);
+                edit.setStyleSheet(
+                        "QComboBox { border: 0px solid red; background-color: rgba(48, 140, 198,255); } QFrame { border: 0px solid blue; } ");
             }
             QPixmap pixmap = edit.grab({0, 0, option.rect.width(), option.rect.height()});
             painter->drawPixmap(option.rect, pixmap);
@@ -308,9 +304,8 @@ void RTTRItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
             edit.setFixedHeight(option.rect.height());
 
             if (option.state & QStyle::State_Selected) {
-                QPalette p = edit.palette();
-                p.setColor(QPalette::Active, QPalette::Base, QColor(48, 140, 198));
-                edit.setPalette(p);
+                edit.setStyleSheet(
+                        "QComboBox { border: 0px solid red; background-color: rgba(48, 140, 198,255); } QFrame { border: 0px solid blue; } ");
             }
             QPixmap pixmap = edit.grab({0, 0, option.rect.width(), option.rect.height()});
             painter->drawPixmap(option.rect, pixmap);
