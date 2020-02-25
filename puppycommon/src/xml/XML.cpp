@@ -156,39 +156,6 @@ rttr::variant extract_basic_types(std::string keyType, std::string keyValue) {
     return "";
 }
 
-void
-createMapItem(rttr::variant_associative_view &view, std::string keyType, std::string keyValue, std::string valueType,
-              std::string valueValue) {
-//    rttr::argument key;
-//    if (keyType == "std::string") {
-//        key = keyValue;
-//    } else if (keyType == "double") {
-//        key = (std::stod(keyValue));
-//    } else if (keyType == "int") {
-//        key = std::stoi(keyValue);
-//    } else if (keyType == "float") {
-//        key = std::stof(keyValue);
-//    } else if (keyType == "long") {
-//        key = std::stol(keyValue);
-//    }
-//    if (valueType == "std::string") {
-//        view.insert(key, valueValue);
-//        return;
-//    } else if (valueType == "double") {
-//        view.insert(key, std::stod(valueValue));
-//        return;
-//    } else if (valueType == "int") {
-//        view.insert(key, std::stoi(valueValue));
-//        return;
-//    } else if (valueType == "float") {
-//        view.insert(key, std::stof(valueValue));
-//        return;
-//    } else if (valueType == "long") {
-//        view.insert(key, std::stol(valueValue));
-//        return;
-//    }
-
-}
 
 void parseInstance(xercesc::DOMNode *node, rttr::instance obj2) {
     rttr::instance obj = obj2.get_type().get_raw_type().is_wrapper() ? obj2.get_wrapped_instance() : obj2;

@@ -33,6 +33,7 @@ RTTR_REGISTRATION {
             )
 
             .property("age", &DataObject::age)
+            .property("enable", &DataObject::enable)
             .property("ps", &DataObject::ps)
             .property("strs", &DataObject::strs)
             .property("ints", &DataObject::ints)

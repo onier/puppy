@@ -37,8 +37,4 @@ component1::component1() {
         std::cout << "hello world" << std::endl;
     }).detach();
     LOG(INFO) << "aaa";
-    cv::Mat matImage(800, 600, CV_64F);
-    cv::rectangle(matImage, cv::Point(20, 200), cv::Point(200, 300), cv::Scalar(255, 0, 0), 1, 1, 0);
-    cv::imshow("test", matImage);
-    cv::waitKey(0);
 }

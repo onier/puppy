@@ -50,7 +50,7 @@ public:
     std::map<int, std::string> map4;
     std::map<Bean, Bean> map2;
     Alignment alignment;
-
+    bool enable;
     DataObject();
 
 RTTR_ENABLE()

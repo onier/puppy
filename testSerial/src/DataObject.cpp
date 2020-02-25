@@ -28,4 +28,5 @@ DataObject::DataObject() {
     name = "";
     age = -1;
     alignment = Alignment::AlignJustify;
+    enable = true;
 }
