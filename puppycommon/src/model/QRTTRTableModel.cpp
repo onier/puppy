@@ -281,7 +281,7 @@ void RTTRItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 
             if (option.state & QStyle::State_Selected) {
                 edit.setStyleSheet(
-                        "QComboBox { border: 0px solid red; background-color: rgba(48, 140, 198,255); } QFrame { border: 0px solid blue; } ");
+                        "QTextEdit { border: 0px solid red; background-color: rgba(48, 140, 198,255); } QFrame { border: 0px solid blue; } ");
             }
             QPixmap pixmap = edit.grab({0, 0, option.rect.width(), option.rect.height()});
             painter->drawPixmap(option.rect, pixmap);
@@ -293,7 +293,7 @@ void RTTRItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 
             if (option.state & QStyle::State_Selected) {
                 edit.setStyleSheet(
-                        "QComboBox { border: 0px solid red; background-color: rgba(48, 140, 198,255); } QFrame { border: 0px solid blue; } ");
+                        "QDoubleSpinBox { border: 0px solid red; background-color: rgba(48, 140, 198,255); } QFrame { border: 0px solid blue; } ");
             }
             QPixmap pixmap = edit.grab({0, 0, option.rect.width(), option.rect.height()});
             painter->drawPixmap(option.rect, pixmap);
@@ -305,7 +305,7 @@ void RTTRItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 
             if (option.state & QStyle::State_Selected) {
                 edit.setStyleSheet(
-                        "QComboBox { border: 0px solid red; background-color: rgba(48, 140, 198,255); } QFrame { border: 0px solid blue; } ");
+                        "QSpinBox { border: 0px solid red; background-color: rgba(48, 140, 198,255); } QFrame { border: 0px solid blue; } ");
             }
             QPixmap pixmap = edit.grab({0, 0, option.rect.width(), option.rect.height()});
             painter->drawPixmap(option.rect, pixmap);
