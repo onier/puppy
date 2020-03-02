@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 #开源代码本地目录
-set(OSS_SRC_PATH ${CMAKE_SOURCE_DIR}/oss/src)
+set(OSS_SRC_PATH /tmp/oss/src)
 #安装目录
 set(OSS_PREFIX_PATH ${CMAKE_SOURCE_DIR}/install/x64-install/oss/)
 #cmake资源路径
