@@ -1,0 +1,3 @@
+[submodule "testSerial"]
+	path = testSerial
+	url = https://github.com/onier/testSerial.git
