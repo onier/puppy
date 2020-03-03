@@ -1,5 +1,5 @@
 sudo apt-get install git pkg-config make libglu1-mesa-dev freeglut3-dev mesa-common-dev ffmpeg libxml2-dev -y
-sudo apt-get install libx11-xcb-dev
+sudo apt-get install libx11-xcb-dev  python-dev -y
 BASE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
 echo $BASE_DIR
 export ARCH=x64
