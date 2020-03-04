@@ -39,7 +39,7 @@ if (NOT ${kdl_FOUND})
     )
 endif ()
 set(kdl_INCLUDE_DIRS "${OSS_PREFIX_PATH}/include")
-set(boost_LIBRARIES ${OSS_PREFIX_PATH}/lib/liborocos-kdl.so
+set(kdl_LIBRARIES ${OSS_PREFIX_PATH}/lib/liborocos-kdl.so
         )
 
 include_directories(${kdl_INCLUDE_DIRS})
