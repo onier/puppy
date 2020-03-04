@@ -26,6 +26,7 @@ if (TARGET kdl)
 endif ()
 find_package(kdl QUIET)
 if (NOT ${kdl_FOUND})
+    include(${CMAKE_CURRENT_LIST_DIR}/add_eigen3.cmake)
     include(ExternalProject)
     ExternalProject_Add(
             kdl
@@ -37,6 +38,9 @@ if (NOT ${kdl_FOUND})
             INSTALL_COMMAND cd ${OSS_SRC_PATH}/kdl/orocos_kdl && make install
             SOURCE_DIR "${OSS_SRC_PATH}/kdl"
     )
+endif ()
+if (TARGET eigen3)
+    ExternalProject_Add_StepDependencies(pcl build eigen3)
 endif ()
 set(kdl_INCLUDE_DIRS "${OSS_PREFIX_PATH}/include")
 set(kdl_LIBRARIES ${OSS_PREFIX_PATH}/lib/liborocos-kdl.so
