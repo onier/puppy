@@ -40,7 +40,7 @@ if (NOT ${kdl_FOUND})
     )
 endif ()
 if (TARGET eigen3)
-    ExternalProject_Add_StepDependencies(pcl build eigen3)
+    ExternalProject_Add_StepDependencies(kdl build eigen3)
 endif ()
 set(kdl_INCLUDE_DIRS "${OSS_PREFIX_PATH}/include")
 set(kdl_LIBRARIES ${OSS_PREFIX_PATH}/lib/liborocos-kdl.so
