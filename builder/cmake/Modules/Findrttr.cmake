@@ -25,7 +25,7 @@ unset(rttr_LIBRARIES)
 
 find_library(rttr_LIBRARIES
         NAMES
-        rttr_core_d
+        rttr_core
         HINTS
         ${OSS_PREFIX_LIB_PATH}
         )
