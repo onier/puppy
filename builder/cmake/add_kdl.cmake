@@ -33,7 +33,7 @@ if (NOT ${kdl_FOUND})
             GIT_REPOSITORY "https://gitee.com/qq2820/orocos_kinematics_dynamics.git"
             GIT_TAG "v1.4.0"
             UPDATE_COMMAND ""
-            CONFIGURE_COMMAND cd ${OSS_SRC_PATH}/kdl/orocos_kdl &&  cmake  -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX=${OSS_PREFIX_PATH}
+            CONFIGURE_COMMAND cd ${OSS_SRC_PATH}/kdl/orocos_kdl &&  ${CMAKE_SOURCE_DIR}/builder/cmake-3.16.4-Linux-x86_64/bin/cmake  -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX=${OSS_PREFIX_PATH}
             BUILD_COMMAND cd ${OSS_SRC_PATH}/kdl/orocos_kdl && make -j2
             INSTALL_COMMAND cd ${OSS_SRC_PATH}/kdl/orocos_kdl && make install
             SOURCE_DIR "${OSS_SRC_PATH}/kdl"
