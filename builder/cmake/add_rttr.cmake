@@ -23,7 +23,7 @@
 
 if (TARGET rttr)
     set(rttr_INCLUDE_DIRS "${OSS_PREFIX_PATH}/include")
-    set(rttr_LIBRARIES "${OSS_PREFIX_PATH}/lib/librttr_core.so")
+    set(rttr_LIBRARIES "${OSS_PREFIX_PATH}/lib/librttr_core_d.so")
     set(rttr_FOUND ON)
     return()
 endif ()
@@ -46,7 +46,7 @@ else()
             TEST_COMMAND ""
     )
     set(rttr_INCLUDE_DIRS "${OSS_PREFIX_PATH}/include")
-    set(rttr_LIBRARIES "${OSS_PREFIX_PATH}/lib/librttr_core.so")
+    set(rttr_LIBRARIES "${OSS_PREFIX_PATH}/lib/librttr_core_d.so")
 endif ()
 
 include_directories(${rttr_INCLUDE_DIRS})
