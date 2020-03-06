@@ -22,11 +22,49 @@
 # SOFTWARE.
 
 if (TARGET boost)
+    set(boost_FOUND ON)
+    set(boost_INCLUDE_DIRS "${OSS_PREFIX_PATH}/include")
+    set(boost_LIBRARIES ${OSS_PREFIX_PATH}/lib/libboost_atomic.so
+            ${OSS_PREFIX_PATH}/lib/libboost_chrono.so
+            ${OSS_PREFIX_PATH}/lib/libboost_container.so
+            ${OSS_PREFIX_PATH}/lib/libboost_context.so
+            ${OSS_PREFIX_PATH}/lib/libboost_contract.so
+            ${OSS_PREFIX_PATH}/lib/libboost_coroutine.so
+            ${OSS_PREFIX_PATH}/lib/libboost_date_time.so
+            ${OSS_PREFIX_PATH}/lib/libboost_fiber.so
+            ${OSS_PREFIX_PATH}/lib/libboost_filesystem.so
+            ${OSS_PREFIX_PATH}/lib/libboost_graph.so
+            ${OSS_PREFIX_PATH}/lib/libboost_iostreams.so
+            ${OSS_PREFIX_PATH}/lib/libboost_locale.so
+            ${OSS_PREFIX_PATH}/lib/libboost_log_setup.so
+            ${OSS_PREFIX_PATH}/lib/libboost_log.so
+            ${OSS_PREFIX_PATH}/lib/libboost_math_c99f.so
+            ${OSS_PREFIX_PATH}/lib/libboost_math_c99l.so
+            ${OSS_PREFIX_PATH}/lib/libboost_math_c99.so
+            ${OSS_PREFIX_PATH}/lib/libboost_math_tr1f.so
+            ${OSS_PREFIX_PATH}/lib/libboost_math_tr1l.so
+            ${OSS_PREFIX_PATH}/lib/libboost_math_tr1.so
+            ${OSS_PREFIX_PATH}/lib/libboost_prg_exec_monitor.so
+            ${OSS_PREFIX_PATH}/lib/libboost_program_options.so
+            ${OSS_PREFIX_PATH}/lib/libboost_random.so
+            ${OSS_PREFIX_PATH}/lib/libboost_regex.so
+            ${OSS_PREFIX_PATH}/lib/libboost_serialization.so
+            ${OSS_PREFIX_PATH}/lib/libboost_stacktrace_addr2line.so
+            ${OSS_PREFIX_PATH}/lib/libboost_stacktrace_backtrace.so
+            ${OSS_PREFIX_PATH}/lib/libboost_stacktrace_basic.so
+            ${OSS_PREFIX_PATH}/lib/libboost_stacktrace_noop.so
+            ${OSS_PREFIX_PATH}/lib/libboost_system.so
+            ${OSS_PREFIX_PATH}/lib/libboost_thread.so
+            ${OSS_PREFIX_PATH}/lib/libboost_timer.so
+            ${OSS_PREFIX_PATH}/lib/libboost_type_erasure.so
+            ${OSS_PREFIX_PATH}/lib/libboost_unit_test_framework.so
+            ${OSS_PREFIX_PATH}/lib/libboost_wave.so
+            ${OSS_PREFIX_PATH}/lib/libboost_wserialization.so
+            )
     return()
 endif ()
-set(BOOST_ROOT ${OSS_PREFIX_PATH})
-find_package(Boost QUIET)
-if (NOT ${Boost_FOUND})
+find_package(boost QUIET)
+if (NOT ${boost_FOUND})
     include(ExternalProject)
     ExternalProject_Add(
             boost
@@ -38,43 +76,44 @@ if (NOT ${Boost_FOUND})
             INSTALL_COMMAND cd ${OSS_SRC_PATH}/boost && ./b2 install
             SOURCE_DIR "${OSS_SRC_PATH}/boost"
     )
+
+    set(boost_INCLUDE_DIRS "${OSS_PREFIX_PATH}/include")
+    set(boost_LIBRARIES ${OSS_PREFIX_PATH}/lib/libboost_atomic.so
+            ${OSS_PREFIX_PATH}/lib/libboost_chrono.so
+            ${OSS_PREFIX_PATH}/lib/libboost_container.so
+            ${OSS_PREFIX_PATH}/lib/libboost_context.so
+            ${OSS_PREFIX_PATH}/lib/libboost_contract.so
+            ${OSS_PREFIX_PATH}/lib/libboost_coroutine.so
+            ${OSS_PREFIX_PATH}/lib/libboost_date_time.so
+            ${OSS_PREFIX_PATH}/lib/libboost_fiber.so
+            ${OSS_PREFIX_PATH}/lib/libboost_filesystem.so
+            ${OSS_PREFIX_PATH}/lib/libboost_graph.so
+            ${OSS_PREFIX_PATH}/lib/libboost_iostreams.so
+            ${OSS_PREFIX_PATH}/lib/libboost_locale.so
+            ${OSS_PREFIX_PATH}/lib/libboost_log_setup.so
+            ${OSS_PREFIX_PATH}/lib/libboost_log.so
+            ${OSS_PREFIX_PATH}/lib/libboost_math_c99f.so
+            ${OSS_PREFIX_PATH}/lib/libboost_math_c99l.so
+            ${OSS_PREFIX_PATH}/lib/libboost_math_c99.so
+            ${OSS_PREFIX_PATH}/lib/libboost_math_tr1f.so
+            ${OSS_PREFIX_PATH}/lib/libboost_math_tr1l.so
+            ${OSS_PREFIX_PATH}/lib/libboost_math_tr1.so
+            ${OSS_PREFIX_PATH}/lib/libboost_prg_exec_monitor.so
+            ${OSS_PREFIX_PATH}/lib/libboost_program_options.so
+            ${OSS_PREFIX_PATH}/lib/libboost_random.so
+            ${OSS_PREFIX_PATH}/lib/libboost_regex.so
+            ${OSS_PREFIX_PATH}/lib/libboost_serialization.so
+            ${OSS_PREFIX_PATH}/lib/libboost_stacktrace_addr2line.so
+            ${OSS_PREFIX_PATH}/lib/libboost_stacktrace_backtrace.so
+            ${OSS_PREFIX_PATH}/lib/libboost_stacktrace_basic.so
+            ${OSS_PREFIX_PATH}/lib/libboost_stacktrace_noop.so
+            ${OSS_PREFIX_PATH}/lib/libboost_system.so
+            ${OSS_PREFIX_PATH}/lib/libboost_thread.so
+            ${OSS_PREFIX_PATH}/lib/libboost_timer.so
+            ${OSS_PREFIX_PATH}/lib/libboost_type_erasure.so
+            ${OSS_PREFIX_PATH}/lib/libboost_unit_test_framework.so
+            ${OSS_PREFIX_PATH}/lib/libboost_wave.so
+            ${OSS_PREFIX_PATH}/lib/libboost_wserialization.so
+            )
 endif ()
-set(boost_INCLUDE_DIRS "${OSS_PREFIX_PATH}/include")
-set(boost_LIBRARIES ${OSS_PREFIX_PATH}/lib/libboost_atomic.so
-        ${OSS_PREFIX_PATH}/lib/libboost_chrono.so
-        ${OSS_PREFIX_PATH}/lib/libboost_container.so
-        ${OSS_PREFIX_PATH}/lib/libboost_context.so
-        ${OSS_PREFIX_PATH}/lib/libboost_contract.so
-        ${OSS_PREFIX_PATH}/lib/libboost_coroutine.so
-        ${OSS_PREFIX_PATH}/lib/libboost_date_time.so
-        ${OSS_PREFIX_PATH}/lib/libboost_fiber.so
-        ${OSS_PREFIX_PATH}/lib/libboost_filesystem.so
-        ${OSS_PREFIX_PATH}/lib/libboost_graph.so
-        ${OSS_PREFIX_PATH}/lib/libboost_iostreams.so
-        ${OSS_PREFIX_PATH}/lib/libboost_locale.so
-        ${OSS_PREFIX_PATH}/lib/libboost_log_setup.so
-        ${OSS_PREFIX_PATH}/lib/libboost_log.so
-        ${OSS_PREFIX_PATH}/lib/libboost_math_c99f.so
-        ${OSS_PREFIX_PATH}/lib/libboost_math_c99l.so
-        ${OSS_PREFIX_PATH}/lib/libboost_math_c99.so
-        ${OSS_PREFIX_PATH}/lib/libboost_math_tr1f.so
-        ${OSS_PREFIX_PATH}/lib/libboost_math_tr1l.so
-        ${OSS_PREFIX_PATH}/lib/libboost_math_tr1.so
-        ${OSS_PREFIX_PATH}/lib/libboost_prg_exec_monitor.so
-        ${OSS_PREFIX_PATH}/lib/libboost_program_options.so
-        ${OSS_PREFIX_PATH}/lib/libboost_random.so
-        ${OSS_PREFIX_PATH}/lib/libboost_regex.so
-        ${OSS_PREFIX_PATH}/lib/libboost_serialization.so
-        ${OSS_PREFIX_PATH}/lib/libboost_stacktrace_addr2line.so
-        ${OSS_PREFIX_PATH}/lib/libboost_stacktrace_backtrace.so
-        ${OSS_PREFIX_PATH}/lib/libboost_stacktrace_basic.so
-        ${OSS_PREFIX_PATH}/lib/libboost_stacktrace_noop.so
-        ${OSS_PREFIX_PATH}/lib/libboost_system.so
-        ${OSS_PREFIX_PATH}/lib/libboost_thread.so
-        ${OSS_PREFIX_PATH}/lib/libboost_timer.so
-        ${OSS_PREFIX_PATH}/lib/libboost_type_erasure.so
-        ${OSS_PREFIX_PATH}/lib/libboost_unit_test_framework.so
-        ${OSS_PREFIX_PATH}/lib/libboost_wave.so
-        ${OSS_PREFIX_PATH}/lib/libboost_wserialization.so
-        )
 include_directories(${boost_INCLUDE_DIRS})
