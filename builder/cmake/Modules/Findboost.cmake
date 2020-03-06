@@ -43,7 +43,43 @@ if (${boost_LIBRARIES} STREQUAL "boost_LIBRARIES-NOTFOUND" OR ${boost_INCLUDE_DI
     message(STATUS "boost not found")
 else ()
     message(STATUS "boost  found ${boost_LIBRARIES}  ${boost_INCLUDE_DIRS} ")
-    file(GLOB_RECURSE boost_LIBRARIES ${OSS_PREFIX_LIB_PATH}/libboost*.so)
+    set(boost_LIBRARIES ${OSS_PREFIX_PATH}/lib/libboost_atomic.so
+            ${OSS_PREFIX_PATH}/lib/libboost_chrono.so
+            ${OSS_PREFIX_PATH}/lib/libboost_container.so
+            ${OSS_PREFIX_PATH}/lib/libboost_context.so
+            ${OSS_PREFIX_PATH}/lib/libboost_contract.so
+            ${OSS_PREFIX_PATH}/lib/libboost_coroutine.so
+            ${OSS_PREFIX_PATH}/lib/libboost_date_time.so
+            ${OSS_PREFIX_PATH}/lib/libboost_fiber.so
+            ${OSS_PREFIX_PATH}/lib/libboost_filesystem.so
+            ${OSS_PREFIX_PATH}/lib/libboost_graph.so
+            ${OSS_PREFIX_PATH}/lib/libboost_iostreams.so
+            ${OSS_PREFIX_PATH}/lib/libboost_locale.so
+            ${OSS_PREFIX_PATH}/lib/libboost_log_setup.so
+            ${OSS_PREFIX_PATH}/lib/libboost_log.so
+            ${OSS_PREFIX_PATH}/lib/libboost_math_c99f.so
+            ${OSS_PREFIX_PATH}/lib/libboost_math_c99l.so
+            ${OSS_PREFIX_PATH}/lib/libboost_math_c99.so
+            ${OSS_PREFIX_PATH}/lib/libboost_math_tr1f.so
+            ${OSS_PREFIX_PATH}/lib/libboost_math_tr1l.so
+            ${OSS_PREFIX_PATH}/lib/libboost_math_tr1.so
+            ${OSS_PREFIX_PATH}/lib/libboost_prg_exec_monitor.so
+            ${OSS_PREFIX_PATH}/lib/libboost_program_options.so
+            ${OSS_PREFIX_PATH}/lib/libboost_random.so
+            ${OSS_PREFIX_PATH}/lib/libboost_regex.so
+            ${OSS_PREFIX_PATH}/lib/libboost_serialization.so
+            ${OSS_PREFIX_PATH}/lib/libboost_stacktrace_addr2line.so
+            ${OSS_PREFIX_PATH}/lib/libboost_stacktrace_backtrace.so
+            ${OSS_PREFIX_PATH}/lib/libboost_stacktrace_basic.so
+            ${OSS_PREFIX_PATH}/lib/libboost_stacktrace_noop.so
+            ${OSS_PREFIX_PATH}/lib/libboost_system.so
+            ${OSS_PREFIX_PATH}/lib/libboost_thread.so
+            ${OSS_PREFIX_PATH}/lib/libboost_timer.so
+            ${OSS_PREFIX_PATH}/lib/libboost_type_erasure.so
+            ${OSS_PREFIX_PATH}/lib/libboost_unit_test_framework.so
+            ${OSS_PREFIX_PATH}/lib/libboost_wave.so
+            ${OSS_PREFIX_PATH}/lib/libboost_wserialization.so
+            )
     set(boost_FOUND ON)
     message(STATUS "boost_LIBRARIES    ${boost_LIBRARIES} ")
 endif ()
