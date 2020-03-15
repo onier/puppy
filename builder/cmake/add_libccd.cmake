@@ -21,19 +21,35 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-set(eigen3_LIBRARIES)
-
-find_path(eigen3_INCLUDE_DIRS
-        NAMES
-        eigen3/Eigen/Core
-        HINTS
-        ${OSS_PREFIX_INC_PATH}
-        )
-if (${eigen3_INCLUDE_DIRS} STREQUAL "eigen3_INCLUDE_DIRS-NOTFOUND")
-    set(eigen3_FOUND OFF)
-    set(eigen3_LIBRARIES)
-    set(eigen3_INCLUDE_DIR)
-else ()
-    set(eigen3_FOUND ON)
-    set(eigen3_INCLUDE_DIRS ${eigen3_INCLUDE_DIRS}/eigen3)
+if (TARGET libccd)
+    set(libccd_INCLUDE_DIRS "${OSS_PREFIX_PATH}/include")
+    set(libccd_LIBRARIES "")
+    set(libccd_FOUND ON)
+    return()
 endif ()
+find_package(libccd QUIET)
+if (${libccd_FOUND})
+    message(STATUS "FOUND libccd ${libccd_INCLUDE_DIRS}  ${libccd_LIBRARIES}")
+else ()
+    include(ExternalProject)
+    include(${CMAKE_CURRENT_LIST_DIR}/add_eigen3.cmake)
+    ExternalProject_Add(
+            libccd
+            GIT_REPOSITORY "https://gitee.com/qq2820/libccd.git"
+            GIT_TAG "v2.1"
+
+            UPDATE_COMMAND ""
+            PATCH_COMMAND ""
+            GIT_SUBMODULES ""
+            SOURCE_DIR "${OSS_SRC_PATH}/libccd"
+            CMAKE_ARGS -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX=${OSS_PREFIX_PATH}
+
+            TEST_COMMAND ""
+    )
+    if (TARGET eigen3)
+        ExternalProject_Add_StepDependencies(libccd build eigen3)
+    endif ()
+    set(libccd_INCLUDE_DIRS "${OSS_PREFIX_PATH}/include")
+    set(flann_LIBRARIES "${OSS_PREFIX_PATH}/lib/liblibccdd.so")
+endif ()
+include_directories(${libccd_INCLUDE_DIRS})

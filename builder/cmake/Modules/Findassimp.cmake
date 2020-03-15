@@ -21,19 +21,25 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-set(eigen3_LIBRARIES)
+unset(assimp_LIBRARIES)
 
-find_path(eigen3_INCLUDE_DIRS
+find_library(assimp_LIBRARIES
         NAMES
-        eigen3/Eigen/Core
+        assimpd
+        HINTS
+        ${OSS_PREFIX_LIB_PATH}
+        )
+find_path(assimp_INCLUDE_DIRS
+        NAMES
+       assimp/aabb.h
         HINTS
         ${OSS_PREFIX_INC_PATH}
         )
-if (${eigen3_INCLUDE_DIRS} STREQUAL "eigen3_INCLUDE_DIRS-NOTFOUND")
-    set(eigen3_FOUND OFF)
-    set(eigen3_LIBRARIES)
-    set(eigen3_INCLUDE_DIR)
+
+if (${assimp_LIBRARIES} STREQUAL "assimp_LIBRARIES-NOTFOUND" OR ${assimp_INCLUDE_DIRS} STREQUAL "assimp_INCLUDE_DIRS-NOTFOUND")
+    set(assimp_FOUND OFF)
+    set(assimp_LIBRARIES)
+    set(assimp_INCLUDE_DIR)
 else ()
-    set(eigen3_FOUND ON)
-    set(eigen3_INCLUDE_DIRS ${eigen3_INCLUDE_DIRS}/eigen3)
+    set(assimp_FOUND ON)
 endif ()

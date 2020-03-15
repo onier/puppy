@@ -21,19 +21,33 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-set(eigen3_LIBRARIES)
-
-find_path(eigen3_INCLUDE_DIRS
-        NAMES
-        eigen3/Eigen/Core
-        HINTS
-        ${OSS_PREFIX_INC_PATH}
-        )
-if (${eigen3_INCLUDE_DIRS} STREQUAL "eigen3_INCLUDE_DIRS-NOTFOUND")
-    set(eigen3_FOUND OFF)
-    set(eigen3_LIBRARIES)
-    set(eigen3_INCLUDE_DIR)
-else ()
-    set(eigen3_FOUND ON)
-    set(eigen3_INCLUDE_DIRS ${eigen3_INCLUDE_DIRS}/eigen3)
+if (TARGET fcl)
+    set(fcl_INCLUDE_DIRS "${OSS_PREFIX_PATH}/include")
+    set(fcl_LIBRARIES "")
+    set(fcl_FOUND ON)
+    return()
 endif ()
+find_package(fcl QUIET)
+if (${fcl_FOUND})
+    message(STATUS "FOUND fcl ${fcl_INCLUDE_DIRS}  ${fcl_LIBRARIES}")
+else ()
+    include(ExternalProject)
+    include(${CMAKE_CURRENT_LIST_DIR}/add_libccd.cmake)
+    ExternalProject_Add(
+            fcl
+            GIT_REPOSITORY "https://gitee.com/qq2820/fcl.git"
+            GIT_TAG "0.3.4"
+
+            UPDATE_COMMAND ""
+            PATCH_COMMAND ""
+            GIT_SUBMODULES ""
+            SOURCE_DIR "${OSS_SRC_PATH}/fcl"
+            CMAKE_ARGS -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX=${OSS_PREFIX_PATH}
+
+            TEST_COMMAND ""
+    )
+    ExternalProject_Add_StepDependencies(fcl build libccd)
+    set(fcl_INCLUDE_DIRS "${OSS_PREFIX_PATH}/include")
+    set(fcl_LIBRARIES "${OSS_PREFIX_PATH}/lib/libfcl.so")
+endif ()
+include_directories(${fcl_INCLUDE_DIRS})

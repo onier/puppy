@@ -21,19 +21,25 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-set(eigen3_LIBRARIES)
+unset(libccd_LIBRARIES)
 
-find_path(eigen3_INCLUDE_DIRS
+find_library(libccd_LIBRARIES
         NAMES
-        eigen3/Eigen/Core
+        libccdd
+        HINTS
+        ${OSS_PREFIX_LIB_PATH}
+        )
+find_path(libccd_INCLUDE_DIRS
+        NAMES
+       libccd/aabb.h
         HINTS
         ${OSS_PREFIX_INC_PATH}
         )
-if (${eigen3_INCLUDE_DIRS} STREQUAL "eigen3_INCLUDE_DIRS-NOTFOUND")
-    set(eigen3_FOUND OFF)
-    set(eigen3_LIBRARIES)
-    set(eigen3_INCLUDE_DIR)
+
+if (${libccd_LIBRARIES} STREQUAL "libccd_LIBRARIES-NOTFOUND" OR ${libccd_INCLUDE_DIRS} STREQUAL "libccd_INCLUDE_DIRS-NOTFOUND")
+    set(libccd_FOUND OFF)
+    set(libccd_LIBRARIES)
+    set(libccd_INCLUDE_DIR)
 else ()
-    set(eigen3_FOUND ON)
-    set(eigen3_INCLUDE_DIRS ${eigen3_INCLUDE_DIRS}/eigen3)
+    set(libccd_FOUND ON)
 endif ()
