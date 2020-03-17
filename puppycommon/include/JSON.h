@@ -27,6 +27,7 @@ SOFTWARE.
 #ifndef PUPPY_JSON_H
 #define PUPPY_JSON_H
 
+#include <ostream>
 #include "rttr/registration.h"
 
 namespace puppy {
@@ -36,6 +37,8 @@ namespace puppy {
             static bool parseJSON(const std::string &json, rttr::instance obj);
 
             static std::string toJSONString(rttr::instance obj);
+
+            friend std::ostream &operator<<(std::ostream &os, const rttr::instance instance);
         };
     }
 }
