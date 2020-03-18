@@ -23,7 +23,7 @@
 
 if (TARGET assimp)
     set(assimp_INCLUDE_DIRS "${OSS_PREFIX_PATH}/include")
-    set(assimp_LIBRARIES "")
+    set(assimp_LIBRARIES "${OSS_PREFIX_PATH}/lib/libassimpd.so")
     set(assimp_FOUND ON)
     return()
 endif ()
@@ -48,6 +48,6 @@ else ()
             TEST_COMMAND ""
     )
     set(assimp_INCLUDE_DIRS "${OSS_PREFIX_PATH}/include")
-    set(flann_LIBRARIES "${OSS_PREFIX_PATH}/lib/libassimpd.so")
+    set(assimp_LIBRARIES "${OSS_PREFIX_PATH}/lib/libassimpd.so")
 endif ()
 include_directories(${assimp_INCLUDE_DIRS})
