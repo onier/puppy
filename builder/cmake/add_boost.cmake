@@ -31,7 +31,6 @@ if (TARGET boost)
             ${OSS_PREFIX_PATH}/lib/libboost_contract.so
             ${OSS_PREFIX_PATH}/lib/libboost_coroutine.so
             ${OSS_PREFIX_PATH}/lib/libboost_date_time.so
-            ${OSS_PREFIX_PATH}/lib/libboost_fiber.so
             ${OSS_PREFIX_PATH}/lib/libboost_filesystem.so
             ${OSS_PREFIX_PATH}/lib/libboost_graph.so
             ${OSS_PREFIX_PATH}/lib/libboost_iostreams.so
@@ -85,7 +84,6 @@ if (NOT ${boost_FOUND})
             ${OSS_PREFIX_PATH}/lib/libboost_contract.so
             ${OSS_PREFIX_PATH}/lib/libboost_coroutine.so
             ${OSS_PREFIX_PATH}/lib/libboost_date_time.so
-            ${OSS_PREFIX_PATH}/lib/libboost_fiber.so
             ${OSS_PREFIX_PATH}/lib/libboost_filesystem.so
             ${OSS_PREFIX_PATH}/lib/libboost_graph.so
             ${OSS_PREFIX_PATH}/lib/libboost_iostreams.so
