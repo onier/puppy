@@ -38,7 +38,6 @@ namespace puppy {
 
             static std::string toJSONString(rttr::instance obj);
 
-            friend std::ostream &operator<<(std::ostream &os, const rttr::instance instance);
         };
     }
 }

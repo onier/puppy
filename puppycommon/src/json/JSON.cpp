@@ -36,6 +36,3 @@ std::string JSON::toJSONString(rttr::instance obj) {
     return io::to_json(obj);
 }
 
-std::ostream &puppy::common::operator<<(std::ostream &os, const rttr::instance json) {
-    return os << JSON::toJSONString(json);
-}
