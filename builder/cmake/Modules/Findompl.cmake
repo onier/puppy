@@ -40,5 +40,8 @@ if (${ompl_LIBRARIES} STREQUAL "ompl_LIBRARIES-NOTFOUND" OR ${ompl_INCLUDE_DIRS}
     set(ompl_LIBRARIES)
     set(ompl_INCLUDE_DIR)
 else ()
+    find_package(eigen3 REQUIRED)
+    set(ompl_LIBRARIES ${eigen3_LIBRARIES} ${ompl_LIBRARIES})
+    set(ompl_INLCUDE_DIRS ${eigen3_INCLUDE_DIRS} ${ompl_INLCUDE_DIRS})
     set(ompl_FOUND ON)
 endif ()
