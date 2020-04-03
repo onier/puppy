@@ -31,7 +31,7 @@ find_library(fcl_LIBRARIES
         )
 find_path(fcl_INCLUDE_DIRS
         NAMES
-       fcl/fcl.h
+       fcl/config.h
         HINTS
         ${OSS_PREFIX_INC_PATH}
         )

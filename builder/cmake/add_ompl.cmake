@@ -22,8 +22,11 @@
 # SOFTWARE.
 
 if (TARGET ompl)
-    set(ompl_INCLUDE_DIRS "${OSS_PREFIX_PATH}/include")
-    set(ompl_LIBRARIES "${OSS_PREFIX_PATH}/lib/libompl.so")
+    set(ompl_INCLUDE_DIRS "${OSS_PREFIX_PATH}/include/ompl-1.5")
+    set(ompl_LIBRARIES ${OSS_PREFIX_PATH}/lib/libompl.so
+            ${OSS_PREFIX_PATH}/lib/libompl_app_base.so
+            ${OSS_PREFIX_PATH}/lib/libompl_app.so
+            )
     set(ompl_FOUND ON)
     return()
 endif ()
@@ -32,28 +35,27 @@ if (${ompl_FOUND})
     message(STATUS "FOUND ompl ${ompl_INCLUDE_DIRS}  ${ompl_LIBRARIES}")
 else ()
     include(ExternalProject)
-    include(${CMAKE_CURRENT_LIST_DIR}/add_boost.cmake)
-    include(${CMAKE_CURRENT_LIST_DIR}/add_eigen3.cmake)
+    include(${CMAKE_CURRENT_LIST_DIR}/add_fcl.cmake)
     ExternalProject_Add(
             ompl
-            GIT_REPOSITORY "https://gitee.com/qq2820/ompl.git"
-            GIT_TAG "1.4.2"
+            GIT_REPOSITORY "https://gitee.com/christ_2014/omplapp.git"
+            GIT_TAG "master"
 
             UPDATE_COMMAND ""
             PATCH_COMMAND ""
-            GIT_SUBMODULES ""
+#            GIT_SUBMODULES ""
             SOURCE_DIR "${OSS_SRC_PATH}/ompl"
-            CMAKE_ARGS -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX=${OSS_PREFIX_PATH} -DASSIMP_BUILD_TESTS=OFF
+            CMAKE_ARGS -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX=${OSS_PREFIX_PATH} -DOMPL_BUILD_TESTS=OFF -DBOOST_ROOT=${OSS_PREFIX_PATH}
 
             TEST_COMMAND ""
     )
-    if (TARGET boost)
-        ExternalProject_Add_StepDependencies(ompl build boost)
+    if (TARGET fcl)
+        ExternalProject_Add_StepDependencies(ompl build fcl)
     endif ()
-    if (TARGET eigen3)
-        ExternalProject_Add_StepDependencies(ompl build eigen3)
-    endif ()
-    set(ompl_INCLUDE_DIRS "${OSS_PREFIX_PATH}/include")
-    set(ompl_LIBRARIES "${OSS_PREFIX_PATH}/lib/libompl.so")
+    set(ompl_INCLUDE_DIRS "${OSS_PREFIX_PATH}/include/ompl-1.5")
+    set(ompl_LIBRARIES ${OSS_PREFIX_PATH}/lib/libompl.so
+            ${OSS_PREFIX_PATH}/lib/libompl_app_base.so
+            ${OSS_PREFIX_PATH}/lib/libompl_app.so
+            )
 endif ()
 include_directories(${ompl_INCLUDE_DIRS})
