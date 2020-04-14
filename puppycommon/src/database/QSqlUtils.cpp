@@ -82,3 +82,13 @@ bool puppy::common::QSqlUtils::execQuery(QSqlQuery query, QMap<QString, std::sha
     if (!query.execBatch())
         LOG(INFO) << query.lastError().text().toStdString();
 }
+
+QSqlQuery puppy::common::QSqlUtils::listAllQuery(std::string typeName) {
+    std::string key = "listALL" + typeName;
+    std::string sql = "select * from ";
+    sql.append(typeName);
+    QSqlQuery query(_dataBase);
+    query.prepare(sql.data());
+    _queryMap.insert({key, query});
+    return query;
+}

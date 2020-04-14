@@ -24,6 +24,38 @@ namespace puppy {
             QSqlUtils(QSqlDatabase database);
 
             template<class Bean>
+            void findAll(std::vector<Bean> &values) {
+                auto begin = std::chrono::high_resolution_clock::now();
+                rttr::type t = rttr::type::get<Bean>();
+                if (t.is_valid()) {
+                    auto properties = t.get_properties();
+                    QSqlQuery query = listAllQuery(t.get_name().data());
+                    query.exec();
+                    while (query.next()) {
+                        auto v = t.create();
+                        for (auto &prop:properties) {
+                            auto typeName = prop.get_type().get_raw_type().get_name().data();
+                            if (typeName == "std::string") {
+                                prop.set_value(v, query.value(typeName).toString().data());
+                            } else if (typeName == "double") {
+                                prop.set_value(v, query.value(typeName).toDouble());
+                            } else if (typeName == "int") {
+                                prop.set_value(v, query.value(typeName).toInt());
+                            } else if (typeName == "float") {
+                                prop.set_value(v, query.value(typeName).toFloat());
+                            } else if (typeName == "longint") {
+                                prop.set_value(v, query.value(typeName).toLongLong());
+                            }
+                        }
+                        values.push_back(v.get_value<Bean>());
+                    }
+                }
+                auto end = std::chrono::high_resolution_clock::now();
+                LOG(INFO) << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count()
+                          << std::endl;
+            }
+
+            template<class Bean>
             bool saveObject(std::vector<Bean> values) {
                 if (values.size() > 0) {
                     QSqlQuery query = createAddQuery(values[0]);
@@ -51,6 +83,8 @@ namespace puppy {
         private:
 
             QSqlQuery createAddQuery(rttr::instance obj);
+
+            QSqlQuery listAllQuery(std::string typeName);
 
             void listInstance(rttr::instance obj, rttr::array_range<rttr::property> &properties,
                               QMap<QString, std::shared_ptr<QVariantList>> &vars);
