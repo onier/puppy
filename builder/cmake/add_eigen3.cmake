@@ -22,6 +22,9 @@
 # SOFTWARE.
 
 if (TARGET eigen3)
+    set(eigen3_INCLUDE_DIRS "${OSS_PREFIX_PATH}/include")
+    set(eigen3_LIBRARIES "")
+    set(eigen3_FOUND ON)
     return()
 endif ()
 find_package(eigen3 QUIET)
