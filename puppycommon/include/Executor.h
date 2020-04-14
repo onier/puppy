@@ -11,8 +11,7 @@
 #include <boost/function.hpp>
 #include <vector>
 
-#ifndef PUPPY_EXECUTOR_H
-#define PUPPY_EXECUTOR_H
+#pragma once
 
 namespace puppy {
     namespace common {
@@ -45,4 +44,3 @@ namespace puppy {
     }
 }
 
-#endif //PUPPY_EXECUTOR_H

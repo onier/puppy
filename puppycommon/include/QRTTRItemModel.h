@@ -2,8 +2,7 @@
 // Created by dev on 2020/3/16.
 //
 
-#ifndef PUPPY_QRTTRITEMMODEL_H
-#define PUPPY_QRTTRITEMMODEL_H
+#pragma once
 
 
 #include <QStandardItemModel>
@@ -20,4 +19,3 @@ private:
 };
 
 
-#endif //PUPPY_QRTTRITEMMODEL_H

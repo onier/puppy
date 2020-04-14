@@ -23,8 +23,7 @@ SOFTWARE.
  */
 
 
-#ifndef PUPPY_QRTTRTABLEMODEL_H
-#define PUPPY_QRTTRTABLEMODEL_H
+#pragma once
 
 #include <QAbstractTableModel>
 #include <QStyledItemDelegate>
@@ -79,4 +78,3 @@ namespace puppy {
     }
 }
 
-#endif //PUPPY_QRTTRTABLEMODEL_H

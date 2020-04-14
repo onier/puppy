@@ -2,8 +2,8 @@
 // Created by dev on 2020/4/11.
 //
 
-#ifndef PUPPY_MYSQLUTILS_H
-#define PUPPY_MYSQLUTILS_H
+#pragma once
+
 
 #include <string>
 #include <QSqlDatabase>
@@ -14,14 +14,14 @@
 #include <JSON.h>
 #include <QVariantList>
 #include <chrono>
+#include <QtSql/QSqlQuery>
 
 namespace puppy {
     namespace common {
 
-        class QMySqlUtils {
+        class QSqlUtils {
         public:
-            QSqlDatabase
-            createDatabase(std::string host, std::string userName, std::string password, std::string database);
+            QSqlUtils(QSqlDatabase database);
 
             template<class Bean>
             bool saveObject(std::vector<Bean> values) {
@@ -35,13 +35,13 @@ namespace puppy {
                         listInstance(b, properties, vars);
                     }
 
-//                    _dataBase.transaction();
+                    _dataBase.transaction();
                     auto begin = std::chrono::high_resolution_clock::now();
                     execQuery(query, vars, properties);
                     auto end = std::chrono::high_resolution_clock::now();
                     LOG(INFO) << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count()
                               << std::endl;
-//                    _dataBase.commit();
+                    _dataBase.commit();
                 } else {
                     LOG(ERROR) << "empty values";
                 }
@@ -49,8 +49,6 @@ namespace puppy {
             }
 
         private:
-            bool checkDataBaseExist(std::string host, std::string userName, std::string password,
-                                    std::string database);
 
             QSqlQuery createAddQuery(rttr::instance obj);
 
@@ -69,4 +67,3 @@ namespace puppy {
     }
 }
 
-#endif //PUPPY_MYSQLUTILS_H

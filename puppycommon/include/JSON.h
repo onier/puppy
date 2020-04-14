@@ -23,9 +23,7 @@ SOFTWARE.
  */
 
 
-
-#ifndef PUPPY_JSON_H
-#define PUPPY_JSON_H
+#pragma once
 
 #include <ostream>
 #include "rttr/registration.h"
@@ -42,4 +40,3 @@ namespace puppy {
     }
 }
 
-#endif //PUPPY_JSON_H
