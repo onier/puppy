@@ -1,5 +1,5 @@
 //
-// Created by dev on 2020/4/11.
+// Created by xuzhenhai on 2020/4/11.
 //
 
 #include "QSqlUtils.h"
