@@ -86,7 +86,7 @@ bool puppy::common::QSqlUtils::execQuery(QSqlQuery query, QMap<QString, std::sha
 QSqlQuery puppy::common::QSqlUtils::listAllQuery(std::string typeName) {
     std::string key = "listALL" + typeName;
     std::string sql = "select * from ";
-    sql.append(typeName);
+    sql.append(typeName);//.append(" where PTID<100");
     QSqlQuery query(_dataBase);
     query.prepare(sql.data());
     _queryMap.insert({key, query});

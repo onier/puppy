@@ -34,24 +34,26 @@ namespace puppy {
                     while (query.next()) {
                         auto v = t.create();
                         for (auto &prop:properties) {
-                            auto typeName = prop.get_type().get_raw_type().get_name().data();
+                            std::string typeName = prop.get_type().get_raw_type().get_name().data();
+                            auto propName = prop.get_name().data();
                             if (typeName == "std::string") {
-                                prop.set_value(v, query.value(typeName).toString().data());
+                                prop.set_value(v, query.value(propName).toString().toStdString());
                             } else if (typeName == "double") {
-                                prop.set_value(v, query.value(typeName).toDouble());
+                                prop.set_value(v, query.value(propName).toDouble());
                             } else if (typeName == "int") {
-                                prop.set_value(v, query.value(typeName).toInt());
+                                prop.set_value(v, query.value(propName).toInt());
                             } else if (typeName == "float") {
-                                prop.set_value(v, query.value(typeName).toFloat());
+                                prop.set_value(v, query.value(propName).toFloat());
                             } else if (typeName == "longint") {
-                                prop.set_value(v, query.value(typeName).toLongLong());
+                                long lvalue = query.value(propName).toLongLong();
+                                prop.set_value(v, lvalue);
                             }
                         }
                         values.push_back(v.get_value<Bean>());
                     }
                 }
                 auto end = std::chrono::high_resolution_clock::now();
-                LOG(INFO) << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count()
+                LOG(INFO) <<"findAll spend time(ms) " <<std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count()
                           << std::endl;
             }
 
