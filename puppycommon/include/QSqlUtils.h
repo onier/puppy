@@ -102,7 +102,33 @@ namespace puppy {
 
                     _dataBase.transaction();
                     auto begin = std::chrono::high_resolution_clock::now();
-                    b = execUpdateQuery(query, vars, properties,primary_key);
+                    b = execUpdateQuery(query, vars, properties, primary_key);
+                    auto end = std::chrono::high_resolution_clock::now();
+                    LOG(INFO) << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count()
+                              << std::endl;
+                    _dataBase.commit();
+                    return b;
+                } else {
+                    LOG(ERROR) << "empty values";
+                }
+                return false;
+            }
+
+            template<class Bean>
+            bool deleteObject(std::vector<Bean> values) {
+                if (values.size() > 0) {
+                    auto begin = std::chrono::high_resolution_clock::now();
+                    std::string primary_key;
+                    QSqlQuery query = createDeleteQuery(values[0], primary_key);
+                    QVariantList vars;
+                    rttr::type type = values[0].get_type();
+                    auto key = type.get_property(primary_key);
+                    for (auto b : values) {
+                        qint64 lvalue = key.get_value(b).to_int64();
+                        vars << lvalue;
+                    }
+                    _dataBase.transaction();
+                    bool b = execDeleteQuery(query, vars);
                     auto end = std::chrono::high_resolution_clock::now();
                     LOG(INFO) << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count()
                               << std::endl;
@@ -120,6 +146,8 @@ namespace puppy {
 
             QSqlQuery createUpdateQuery(rttr::instance obj, bool &b, std::string &primary_key);
 
+            QSqlQuery createDeleteQuery(rttr::instance obj, std::string &primary_key);
+
             QSqlQuery listAllQuery(std::string typeName);
 
             void listInstance(rttr::instance obj, rttr::array_range<rttr::property> &properties,
@@ -131,7 +159,9 @@ namespace puppy {
 
             bool
             execUpdateQuery(QSqlQuery query, QMap<QString, std::shared_ptr<QVariantList>> vars,
-                            rttr::array_range<rttr::property> &properties,std::string &primary_key);
+                            rttr::array_range<rttr::property> &properties, std::string &primary_key);
+
+            bool execDeleteQuery(QSqlQuery query, QVariantList &ids);
 
         private:
             QSqlDatabase _dataBase;

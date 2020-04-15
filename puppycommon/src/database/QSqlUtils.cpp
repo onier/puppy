@@ -13,14 +13,31 @@ puppy::common::QSqlUtils::QSqlUtils(QSqlDatabase database) : _dataBase(database)
 
 }
 
+QSqlQuery puppy::common::QSqlUtils::createDeleteQuery(rttr::instance obj, std::string &primary_key) {
+    std::string queryKey = "delete_";
+    primary_key = obj.get_type().get_metadata("PRIMRARY_KEY").to_string();
+    queryKey = queryKey + obj.get_type().get_name().data();
+    if (_queryMap.find(queryKey) != _queryMap.end()) {
+        return _queryMap.find(queryKey)->second;
+    }
+    std::string tableName = obj.get_type().get_name().data();
+    std::string sql = "delete from ";
+    sql.append(tableName).append(" where ").append(" ").append(primary_key).append("=?");
+    QSqlQuery query(_dataBase);
+    query.prepare(QString::fromStdString(sql));
+    _queryMap.insert({queryKey, query});
+    LOG(INFO)<<sql;
+    return query;
+}
+
 QSqlQuery puppy::common::QSqlUtils::createUpdateQuery(rttr::instance obj, bool &b, std::string &primary_key) {
     std::string queryKey = "update_";
+    primary_key = obj.get_type().get_metadata("PRIMRARY_KEY").to_string();
     queryKey = queryKey + obj.get_type().get_name().data();
     if (_queryMap.find(queryKey) != _queryMap.end()) {
         return _queryMap.find(queryKey)->second;
     }
     auto properties = obj.get_type().get_properties();
-    primary_key = obj.get_type().get_metadata("PRIMRARY_KEY").to_string();
     if (primary_key.empty()) {
         b = false;
         LOG(ERROR) << " priamry key not found ";
@@ -115,6 +132,15 @@ bool puppy::common::QSqlUtils::execAddQuery(QSqlQuery query, QMap<QString, std::
     return b;
 }
 
+bool puppy::common::QSqlUtils::execDeleteQuery(QSqlQuery query, QVariantList &ids) {
+    query.addBindValue(ids);
+    bool b = query.execBatch();
+    if (!b) {
+        LOG(INFO) << query.lastError().text().toStdString();
+    }
+    return b;
+}
+
 bool puppy::common::QSqlUtils::execUpdateQuery(QSqlQuery query, QMap<QString, std::shared_ptr<QVariantList>> vars,
                                                rttr::array_range<rttr::property> &properties,
                                                std::string &primary_key) {
@@ -144,3 +170,5 @@ QSqlQuery puppy::common::QSqlUtils::listAllQuery(std::string typeName) {
     _queryMap.insert({key, query});
     return query;
 }
+
+
