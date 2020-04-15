@@ -53,7 +53,8 @@ namespace puppy {
                     }
                 }
                 auto end = std::chrono::high_resolution_clock::now();
-                LOG(INFO) <<"findAll spend time(ms) " <<std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count()
+                LOG(INFO) << "findAll spend time(ms) "
+                          << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count()
                           << std::endl;
             }
 
@@ -71,11 +72,42 @@ namespace puppy {
 
                     _dataBase.transaction();
                     auto begin = std::chrono::high_resolution_clock::now();
-                    execQuery(query, vars, properties);
+                    bool b = execAddQuery(query, vars, properties);
                     auto end = std::chrono::high_resolution_clock::now();
                     LOG(INFO) << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count()
                               << std::endl;
                     _dataBase.commit();
+                    return b;
+                } else {
+                    LOG(ERROR) << "empty values";
+                }
+                return false;
+            }
+
+            template<class Bean>
+            bool updateObject(std::vector<Bean> values) {
+                if (values.size() > 0) {
+                    bool b = false;
+                    std::string primary_key;
+                    QSqlQuery query = createUpdateQuery(values[0], b, primary_key);
+                    if (!b) {
+                        return false;
+                    }
+                    QMap<QString, std::shared_ptr<QVariantList>> vars;
+                    rttr::type type = values[0].get_type();
+                    auto properties = type.get_properties();
+                    for (auto b : values) {
+                        listInstance(b, properties, vars);
+                    }
+
+                    _dataBase.transaction();
+                    auto begin = std::chrono::high_resolution_clock::now();
+                    b = execUpdateQuery(query, vars, properties,primary_key);
+                    auto end = std::chrono::high_resolution_clock::now();
+                    LOG(INFO) << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count()
+                              << std::endl;
+                    _dataBase.commit();
+                    return b;
                 } else {
                     LOG(ERROR) << "empty values";
                 }
@@ -86,14 +118,20 @@ namespace puppy {
 
             QSqlQuery createAddQuery(rttr::instance obj);
 
+            QSqlQuery createUpdateQuery(rttr::instance obj, bool &b, std::string &primary_key);
+
             QSqlQuery listAllQuery(std::string typeName);
 
             void listInstance(rttr::instance obj, rttr::array_range<rttr::property> &properties,
                               QMap<QString, std::shared_ptr<QVariantList>> &vars);
 
             bool
-            execQuery(QSqlQuery query, QMap<QString, std::shared_ptr<QVariantList>> list,
-                      rttr::array_range<rttr::property> &properties);
+            execAddQuery(QSqlQuery query, QMap<QString, std::shared_ptr<QVariantList>> vars,
+                         rttr::array_range<rttr::property> &properties);
+
+            bool
+            execUpdateQuery(QSqlQuery query, QMap<QString, std::shared_ptr<QVariantList>> vars,
+                            rttr::array_range<rttr::property> &properties,std::string &primary_key);
 
         private:
             QSqlDatabase _dataBase;

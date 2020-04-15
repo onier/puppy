@@ -13,6 +13,35 @@ puppy::common::QSqlUtils::QSqlUtils(QSqlDatabase database) : _dataBase(database)
 
 }
 
+QSqlQuery puppy::common::QSqlUtils::createUpdateQuery(rttr::instance obj, bool &b, std::string &primary_key) {
+    std::string queryKey = "update_";
+    queryKey = queryKey + obj.get_type().get_name().data();
+    if (_queryMap.find(queryKey) != _queryMap.end()) {
+        return _queryMap.find(queryKey)->second;
+    }
+    auto properties = obj.get_type().get_properties();
+    primary_key = obj.get_type().get_metadata("PRIMRARY_KEY").to_string();
+    if (primary_key.empty()) {
+        b = false;
+        LOG(ERROR) << " priamry key not found ";
+        return QSqlQuery();
+    }
+    std::string tableName = obj.get_type().get_name().data();
+    std::string sql = "update package_task set ";
+    for (auto it = properties.begin(); it != properties.end(); it++) {
+        if (it->get_name() != primary_key) {
+            sql.append(it->get_name().data()).append("=? ,");
+        }
+    }
+    sql = sql.substr(0, sql.size() - 1);
+    sql.append(" where ").append(primary_key).append("=?");
+    LOG(INFO) << sql;
+    QSqlQuery query(_dataBase);
+    query.prepare(QString::fromStdString(sql));
+    _queryMap.insert({queryKey, query});
+    b = true;
+    return query;
+}
 
 QSqlQuery puppy::common::QSqlUtils::createAddQuery(rttr::instance type) {
     std::string queryKey = "add_";
@@ -73,14 +102,37 @@ void puppy::common::QSqlUtils::listInstance(rttr::instance obj, rttr::array_rang
 
 #include <QSqlError>
 
-bool puppy::common::QSqlUtils::execQuery(QSqlQuery query, QMap<QString, std::shared_ptr<QVariantList>> vars,
-                                         rttr::array_range<rttr::property> &properties) {
+bool puppy::common::QSqlUtils::execAddQuery(QSqlQuery query, QMap<QString, std::shared_ptr<QVariantList>> vars,
+                                            rttr::array_range<rttr::property> &properties) {
     for (auto prop:properties) {
         std::shared_ptr<QVariantList> list = vars[QString::fromStdString(prop.get_name().data())];
         query.addBindValue(*list);
     }
-    if (!query.execBatch())
+    bool b = query.execBatch();
+    if (!b) {
         LOG(INFO) << query.lastError().text().toStdString();
+    }
+    return b;
+}
+
+bool puppy::common::QSqlUtils::execUpdateQuery(QSqlQuery query, QMap<QString, std::shared_ptr<QVariantList>> vars,
+                                               rttr::array_range<rttr::property> &properties,
+                                               std::string &primary_key) {
+    std::shared_ptr<QVariantList> ids;
+    for (auto prop:properties) {
+        std::shared_ptr<QVariantList> list = vars[QString::fromStdString(prop.get_name().data())];
+        if (prop.get_name() != primary_key) {
+            query.addBindValue(*list);
+        } else {
+            ids = list;
+        }
+    }
+    query.addBindValue(*ids);
+    bool b = query.execBatch();
+    if (!b) {
+        LOG(INFO) << query.lastError().text().toStdString();
+    }
+    return b;
 }
 
 QSqlQuery puppy::common::QSqlUtils::listAllQuery(std::string typeName) {
