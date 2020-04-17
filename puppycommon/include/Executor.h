@@ -34,6 +34,8 @@ namespace puppy {
 
             void postTimerTaskSecond(boost::function<void()> function, int second = 3);
 
+            void postTimerTaskWithFixRate(boost::function<void()> function, int second = 3);
+
             void postTimerTaskMilliSecond(boost::function<void()> function, int microsecond = 3);
 
         public:

@@ -39,3 +39,13 @@ void puppy::common::Executor::postTimerTaskMilliSecond(boost::function<void()> f
         function();
     });
 }
+
+void puppy::common::Executor::postTimerTaskWithFixRate(boost::function<void()> function, int second) {
+    boost::posix_time::seconds interval(second);
+    boost::shared_ptr<boost::asio::deadline_timer> timer = boost::shared_ptr<boost::asio::deadline_timer>(
+            new boost::asio::deadline_timer(*(_io_service), interval));
+    timer->async_wait([&, function, timer,second](const boost::system::error_code &) {
+        function();
+        postTimerTaskWithFixRate(function, second);
+    });
+}

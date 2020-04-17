@@ -25,9 +25,9 @@ bool puppy::common::QDataBaseUtils::checkDataBaseExist(std::string host, std::st
 
 QSqlDatabase
 puppy::common::QDataBaseUtils::createMysqlDatabase(std::string host, std::string userName, std::string password,
-                                                   std::string database) {
+                                                   std::string database,std::string connectionName) {
     if (checkDataBaseExist(host, userName, password, database)) {
-        QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL");
+        QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL",connectionName.data());
         db.setHostName(host.data());
         db.setUserName(userName.data());
         db.setDatabaseName(database.data());
@@ -59,8 +59,8 @@ puppy::common::QDataBaseUtils::createMysqlDatabase(std::string host, std::string
     }
 }
 
-QSqlDatabase puppy::common::QDataBaseUtils::createQqliteDatabase(std::string name) {
-    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
+QSqlDatabase puppy::common::QDataBaseUtils::createQqliteDatabase(std::string name,std::string connectionName) {
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE",connectionName.data());
     db.setDatabaseName(name.data());
     if (!db.open()) {
         QString error = db.lastError().text();
