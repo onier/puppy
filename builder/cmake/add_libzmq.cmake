@@ -22,6 +22,9 @@
 # SOFTWARE.
 
 if (TARGET libzmq)
+    set(libzmq_INCLUDE_DIRS "${OSS_PREFIX_PATH}/include")
+    set(libzmq_LIBRARIES "${OSS_PREFIX_PATH}/lib/libzmq.so")
+    set(libzmq_FOUND ON)
     return()
 endif ()
 find_package(libzmq QUIET)

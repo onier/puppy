@@ -68,7 +68,6 @@ else ()
             ${OSS_PREFIX_PATH}/lib/libboost_regex.so
             ${OSS_PREFIX_PATH}/lib/libboost_serialization.so
             ${OSS_PREFIX_PATH}/lib/libboost_stacktrace_addr2line.so
-            ${OSS_PREFIX_PATH}/lib/libboost_stacktrace_backtrace.so
             ${OSS_PREFIX_PATH}/lib/libboost_stacktrace_basic.so
             ${OSS_PREFIX_PATH}/lib/libboost_stacktrace_noop.so
             ${OSS_PREFIX_PATH}/lib/libboost_system.so

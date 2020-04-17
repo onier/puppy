@@ -41,7 +41,7 @@ set(OSS_PREFIX_INC_PATH ${OSS_PREFIX_PATH}/include)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/Modules ${CMAKE_MODULE_PATH})
 
 #qt的安装目录
-set(QT_ROOT /opt/Qt5.14.1/5.14.1/gcc_64/)
+set(QT_ROOT /opt/Qt5.14.1/5.14.1/gcc_64)
 set(Qt5Core_DIR ${QT_ROOT}/lib/cmake/Qt5Core)
 set(Qt5_DIR ${QT_ROOT}/lib/cmake/Qt5)
 set(QT_QMAKE_EXECUTABLE ${QT_ROOT}/bin/qmake)

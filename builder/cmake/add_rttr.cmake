@@ -45,8 +45,10 @@ else()
 
             TEST_COMMAND ""
     )
+    message(STATUS "build rttr set rttr value") 
     set(rttr_INCLUDE_DIRS "${OSS_PREFIX_PATH}/include")
     set(rttr_LIBRARIES "${OSS_PREFIX_PATH}/lib/librttr_core_d.so")
+    set(rttr_FOUND ON)
 endif ()
-
+message(STATUS "xxxxxxxxxxxxxxxxxxxUDE_DIRS=${rttr_INCLUDE_DIRS}")
 include_directories(${rttr_INCLUDE_DIRS})

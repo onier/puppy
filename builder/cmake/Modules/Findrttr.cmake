@@ -20,27 +20,30 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+if (TARGET rttr)
+    return()
+endif()
 
-unset(rttr_LIBRARIES)
-
-find_library(rttr_LIBRARIES
+find_library(rttr_LIBS_LIBRARIES
         NAMES
         rttr_core_d
         HINTS
         ${OSS_PREFIX_LIB_PATH}
         )
-find_path(rttr_INCLUDE_DIRS
+find_path(rttr_INCS_INCLUDE_DIRS
         NAMES
         rttr/registration.h
         HINTS
         ${OSS_PREFIX_INC_PATH}
         )
-message(STATUS "${rttr_LIBRARIES} ")
-message(STATUS "${rttr_INCLUDE_DIRS} ")
-if (${rttr_LIBRARIES} STREQUAL "rttr_LIBRARIES-NOTFOUND" OR ${rttr_INCLUDE_DIRS} STREQUAL "rttr_INCLUDE_DIRS-NOTFOUND")
+message(STATUS "${rttr_LIBS_LIBRARIES} ")
+message(STATUS "${rttr_INCS_INCLUDE_DIRS} ")
+if (${rttr_LIBS_LIBRARIES} STREQUAL "rttr_LIBS_LIBRARIES-NOTFOUND" OR ${rttr_INCS_INCLUDE_DIRS} STREQUAL "rttr_INCS_INCLUDE_DIRS-NOTFOUND")
     set(rttr_FOUND OFF)
     set(rttr_LIBRARIES)
     set(rttr_INCLUDE_DIR)
 else ()
     set(rttr_FOUND ON)
+    set(rttr_LIBRARIES ${rttr_LIBS_LIBRARIES})
+    set(rttr_INCLUDE_DIR ${rttr_INCS_INCLUDE_DIRS})
 endif ()
