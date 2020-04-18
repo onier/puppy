@@ -140,6 +140,10 @@ namespace puppy {
                 return false;
             }
 
+            void addQuery(std::string key, QSqlQuery sqlQuery) {
+                _queryMap.insert({key, sqlQuery});
+            }
+
         private:
 
             QSqlQuery createAddQuery(rttr::instance obj);

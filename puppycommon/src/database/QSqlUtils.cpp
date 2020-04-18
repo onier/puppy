@@ -163,6 +163,9 @@ bool puppy::common::QSqlUtils::execUpdateQuery(QSqlQuery query, QMap<QString, st
 
 QSqlQuery puppy::common::QSqlUtils::listAllQuery(std::string typeName) {
     std::string key = "listALL" + typeName;
+    if (_queryMap.find(key) != _queryMap.end()) {
+        return _queryMap.find(key)->second;
+    }
     std::string sql = "select * from ";
     sql.append(typeName);//.append(" where PTID<100");
     QSqlQuery query(_dataBase);
