@@ -90,9 +90,9 @@ namespace puppy {
                     bool b = false;
                     std::string primary_key;
                     QSqlQuery query = createUpdateQuery(values[0], b, primary_key);
-                    if (!b) {
-                        return false;
-                    }
+//                    if (!b) {
+//                        return false;
+//                    }
                     QMap<QString, std::shared_ptr<QVariantList>> vars;
                     rttr::type type = values[0].get_type();
                     auto properties = type.get_properties();
@@ -103,6 +103,9 @@ namespace puppy {
                     _dataBase.transaction();
                     auto begin = std::chrono::high_resolution_clock::now();
                     b = execUpdateQuery(query, vars, properties, primary_key);
+                    if(!b){
+                        LOG(ERROR)<<_dataBase.lastError().text().toStdString();
+                    }
                     auto end = std::chrono::high_resolution_clock::now();
                     LOG(INFO) << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count()
                               << std::endl;
