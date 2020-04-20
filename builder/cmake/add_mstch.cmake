@@ -22,6 +22,9 @@
 # SOFTWARE.
 
 if (TARGET mstch)
+    set(mstch_INCLUDE_DIRS "${OSS_PREFIX_PATH}/include")
+    set(mstch_LIBRARIES "${OSS_PREFIX_PATH}/lib/libmstch.so")
+    set(mstch_FOUND ON)
     return()
 endif ()
 find_package(mstch QUIET)
@@ -44,5 +47,6 @@ else ()
     )
     set(mstch_INCLUDE_DIRS "${OSS_PREFIX_PATH}/include")
     set(mstch_LIBRARIES "${OSS_PREFIX_PATH}/lib/libmstch.so")
+    set(mstch_FOUND ON)
 endif ()
 include_directories(${zmq_INCLUDE_DIRS})

@@ -21,9 +21,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-if (TARGET kdl)
-    return()
-endif ()
+
 find_package(kdl QUIET)
 if (NOT ${kdl_FOUND})
     include(${CMAKE_CURRENT_LIST_DIR}/add_eigen3.cmake)
@@ -38,12 +36,11 @@ if (NOT ${kdl_FOUND})
             INSTALL_COMMAND cd ${OSS_SRC_PATH}/kdl/orocos_kdl && make install
             SOURCE_DIR "${OSS_SRC_PATH}/kdl"
     )
+    if (TARGET eigen3)
+        ExternalProject_Add_StepDependencies(kdl build eigen3)
+    endif ()
+    set(kdl_INCLUDE_DIRS "${OSS_PREFIX_PATH}/include")
+    set(kdl_FOUND ON)
+    set(kdl_LIBRARIES ${OSS_PREFIX_PATH}/lib/liborocos-kdl.so)
 endif ()
-if (TARGET eigen3)
-    ExternalProject_Add_StepDependencies(kdl build eigen3)
-endif ()
-set(kdl_INCLUDE_DIRS "${OSS_PREFIX_PATH}/include")
-set(kdl_LIBRARIES ${OSS_PREFIX_PATH}/lib/liborocos-kdl.so
-        )
-
 include_directories(${kdl_INCLUDE_DIRS})

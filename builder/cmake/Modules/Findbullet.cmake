@@ -37,7 +37,7 @@ find_path(bullet_INCLUDE_DIRS
         )
 message(STATUS "${bullet_LIBRARIES} ")
 message(STATUS "${bullet_INCLUDE_DIRS} ")
-if (${bullet_LIBRARIES} STREQUAL "bullet_LIBRARIES-NOTFOUND" OR ${bullet_INCLUDE_DIRS} STREQUAL "bullet_INCLUDE_DIRS-NOTFOUND")
+if ("${bullet_LIBRARIES}" STREQUAL "bullet_LIBRARIES-NOTFOUND" OR "${bullet_INCLUDE_DIRS}" STREQUAL "bullet_INCLUDE_DIRS-NOTFOUND")
     set(bullet_FOUND OFF)
     set(bullet_LIBRARIES)
     set(bullet_INCLUDE_DIR)

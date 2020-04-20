@@ -37,7 +37,7 @@ find_path(libxslt_INCLUDE_DIRS
         )
 message(STATUS "${libxslt_LIBRARIES} ")
 message(STATUS "${libxslt_INCLUDE_DIRS} ")
-if (${libxslt_LIBRARIES} STREQUAL "libxslt_LIBRARIES-NOTFOUND" OR ${libxslt_INCLUDE_DIRS} STREQUAL "libxslt_INCLUDE_DIRS-NOTFOUND")
+if ("${libxslt_LIBRARIES}" STREQUAL "libxslt_LIBRARIES-NOTFOUND" OR "${libxslt_INCLUDE_DIRS}" STREQUAL "libxslt_INCLUDE_DIRS-NOTFOUND")
     set(libxslt_FOUND OFF)
     set(libxslt_LIBRARIES)
     set(libxslt_INCLUDE_DIR)

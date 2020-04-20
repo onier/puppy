@@ -17,32 +17,32 @@
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 # AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# LIABILITY, WHETHER IN AN hACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-if (TARGET odb)
-    return()
-endif ()
-find_package(odb QUIET)
-if (${odb_FOUND})
-    message(STATUS "FOUND odb  ${odb_LIBRARIES}  ${odb_INCLUDE_DIRS}")
+unset(folly_LIBRARIES)
+
+find_library(folly_LIBRARIES
+        NAMES
+        folly
+        HINTS
+        ${OSS_PREFIX_LIB_PATH}
+        )
+find_path(folly_INCLUDE_DIRS
+        NAMES
+        folly/Executor.h
+        HINTS
+        ${OSS_PREFIX_INC_PATH}
+        )
+message(STATUS "${folly_LIBRARIES} ")
+message(STATUS "${folly_INCLUDE_DIRS} ")
+if (${folly_LIBRARIES} STREQUAL "folly_LIBRARIES-NOTFOUND" OR ${folly_INCLUDE_DIRS} STREQUAL "folly_INCLUDE_DIRS-NOTFOUND")
+    set(folly_FOUND OFF)
+    set(folly_LIBRARIES)
+    set(folly_INCLUDE_DIR)
 else ()
-    include(ExternalProject)
-    ExternalProject_Add(
-            odb
-            GIT_REPOSITORY "https://gitee.com/qq2820/libodb.git"
-            GIT_TAG "2.4.0"
-
-            UPDATE_COMMAND ""
-            PATCH_COMMAND ""
-
-            SOURCE_DIR "${OSS_SRC_PATH}/odb"
-            CMAKE_ARGS -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX=${OSS_PREFIX_PATH}
-
-            TEST_COMMAND ""
-    )
-    set(odb_INCLUDE_DIRS "${OSS_PREFIX_PATH}/include")
-    set(odb_LIBRARIES "${OSS_PREFIX_PATH}/lib/odb.so")
+    set(folly_INCLUDE_DIRS "${OSS_PREFIX_PATH}/include")
+    set(folly_LIBRARIES ${OSS_PREFIX_PATH}/lib/libfolly.so)
+    set(folly_FOUND ON)
 endif ()
-include_directories(${zmq_INCLUDE_DIRS})

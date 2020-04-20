@@ -22,14 +22,14 @@
 # SOFTWARE.
 
 if (TARGET pcl)
+    set(pcl_INCLUDE_DIRS "${OSS_PREFIX_PATH}/include")
+    set(pcl_LIBRARIES "")
+    set(pcl_FOUND ON)
     return()
 endif ()
 find_package(pcl QUIET)
 if (${pcl_FOUND})
     message(STATUS "FOUND pcl ${pcl_LIBRARIES} ${pcl_INCLUDE_DIRS}")
-#    set(pcl_LIBRARIES ${PCL_LIBRARIES})
-#    set(pcl_INCLUDE_DIRS ${PCL_INCLUDE_DIRS})
-#    set(pcl_FOUND ${PCL_FOUND})
 else ()
     include(${CMAKE_CURRENT_LIST_DIR}/add_flann.cmake)
     include(${CMAKE_CURRENT_LIST_DIR}/add_boost.cmake)

@@ -21,6 +21,12 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+if (TARGET kdl)
+    set(kdl_FOUND ON)
+    set(kdl_INCLUDE_DIRS "${OSS_PREFIX_PATH}/include")
+    set(kdl_LIBRARIES ${OSS_PREFIX_PATH}/lib/liborocos-kdl.so)
+    return()
+endif ()
 unset(kdl_LIBRARIES)
 
 find_library(kdl_LIBRARIES
