@@ -29,7 +29,7 @@ project(${CURRENT_PROJECT_NAME})
 message(STATUS "current project name is ${PROJECT_NAME}")
 #获取当前项目的目录文件名
 cmake_policy(SET CMP0097 NEW)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -pthread")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp -std=c++11 -pthread")
 
 #编译的库和进程的输出目录
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/out/lib)
