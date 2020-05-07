@@ -22,6 +22,9 @@
 # SOFTWARE.
 
 if (TARGET tbb)
+    set(tbb_INCLUDE_DIRS "${OSS_PREFIX_PATH}/include")
+    set(tbb_LIBRARIES ${OSS_PREFIX_PATH}/lib/libtbb.so ${OSS_PREFIX_PATH}/lib/libtbbmalloc.so)
+    set(tbb_FOUND ON)
     return()
 endif ()
 find_package(tbb QUIET)

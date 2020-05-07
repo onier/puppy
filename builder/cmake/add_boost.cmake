@@ -28,7 +28,6 @@ if (TARGET boost)
             ${OSS_PREFIX_PATH}/lib/libboost_chrono.so
             ${OSS_PREFIX_PATH}/lib/libboost_container.so
             ${OSS_PREFIX_PATH}/lib/libboost_context.so
-            ${OSS_PREFIX_PATH}/lib/libboost_contract.so
             ${OSS_PREFIX_PATH}/lib/libboost_coroutine.so
             ${OSS_PREFIX_PATH}/lib/libboost_date_time.so
             ${OSS_PREFIX_PATH}/lib/libboost_filesystem.so
@@ -66,8 +65,8 @@ if (NOT ${boost_FOUND})
     include(ExternalProject)
     ExternalProject_Add(
             boost
-            GIT_REPOSITORY "https://gitee.com/qq2820/boost.git"
-            GIT_TAG "master"
+            GIT_REPOSITORY "https://gitee.com/christ_2014/boost.git"
+            GIT_TAG "1.66.0"
             UPDATE_COMMAND ""
             CONFIGURE_COMMAND cd ${OSS_SRC_PATH}/boost && ./bootstrap.sh --prefix=${OSS_PREFIX_PATH}
             BUILD_COMMAND cd ${OSS_SRC_PATH}/boost && ./b2 cxxflags='-g' -j2
@@ -80,7 +79,6 @@ if (NOT ${boost_FOUND})
             ${OSS_PREFIX_PATH}/lib/libboost_chrono.so
             ${OSS_PREFIX_PATH}/lib/libboost_container.so
             ${OSS_PREFIX_PATH}/lib/libboost_context.so
-            ${OSS_PREFIX_PATH}/lib/libboost_contract.so
             ${OSS_PREFIX_PATH}/lib/libboost_coroutine.so
             ${OSS_PREFIX_PATH}/lib/libboost_date_time.so
             ${OSS_PREFIX_PATH}/lib/libboost_filesystem.so

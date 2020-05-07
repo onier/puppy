@@ -103,8 +103,8 @@ namespace puppy {
                     _dataBase.transaction();
                     auto begin = std::chrono::high_resolution_clock::now();
                     b = execUpdateQuery(query, vars, properties, primary_key);
-                    if(!b){
-                        LOG(ERROR)<<_dataBase.lastError().text().toStdString();
+                    if (!b) {
+                        LOG(ERROR) << _dataBase.lastError().text().toStdString();
                     }
                     auto end = std::chrono::high_resolution_clock::now();
                     LOG(INFO) << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count()
@@ -146,6 +146,8 @@ namespace puppy {
             void addQuery(std::string key, QSqlQuery sqlQuery) {
                 _queryMap.insert({key, sqlQuery});
             }
+
+            QSqlDatabase getQSqlDatabase();
 
         private:
 
