@@ -25,10 +25,11 @@ if (TARGET opencv)
     return()
 endif ()
 find_package(opencv QUIET)
+set(OpenCV_INSTALL_PATH  ${OSS_PREFIX_PATH})
 set(OpenCV_DIR ${OSS_PREFIX_PATH}/lib/cmake/opencv4/)
-find_package(OpenCV QUIET)
+find_package(OpenCV 4.3.0 QUIET)
 if (${OpenCV_FOUND})
-    message(STATUS "FOUND OpenCV  ${OpenCV_LIBRARIES}  ${OpenCV_INCLUDE_DIRS}")
+    message(STATUS "FOUND OpenCV ${OpenCV_VERSION} ${OpenCV_LIBRARIES}  ${OpenCV_INCLUDE_DIRS}")
     set(opencv_LIBRARIES ${OpenCV_LIBRARIES})
     set(opencv_INCLUDE_DIRS ${OpenCV_INCLUDE_DIRS})
     set(opencv_FOUND ${OpenCV_FOUND})
@@ -38,20 +39,20 @@ else ()
 
         execute_process(
                 COMMAND
-                git clone https://gitee.com/qq2820/opencv_contrib.git -b 4.1.0 ${OSS_SRC_PATH}/opencv-contrib
+                git clone https://gitee.com/qq2820/opencv_contrib.git -b 4.3.0 ${OSS_SRC_PATH}/opencv-contrib
         )
     endif()
     ExternalProject_Add(
             opencv
             GIT_REPOSITORY "https://gitee.com/qq2820/opencv.git"
-            GIT_TAG "4.1.0"
+            GIT_TAG "4.3.0"
 
             UPDATE_COMMAND ""
             PATCH_COMMAND ""
 
             SOURCE_DIR "${OSS_SRC_PATH}/opencv"
             CMAKE_ARGS -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX=${OSS_PREFIX_PATH} -DWITH_QT=on -DBUILD_opencv_xfeatures2d=OFF
-            -DCMAKE_PREFIX_PATH=${QT_ROOT}/lib/cmake -DBUILD_UNIT_TESTS=OFF -DRAPIDJSON_BUILD_EXAMPLES=OFF
+            -DCMAKE_PREFIX_PATH=${QT_ROOT}/lib/cmake -DBUILD_UNIT_TESTS=OFF -DRAPIDJSON_BUILD_EXAMPLES=OFF -DWITH_CUDA=ON -DWITH_CUDNN=ON -DHAVE_CUDNN=ON -DOPENCV_DNN_CUDA=ON
             -DQt5Core_DIR=${QT_ROOT}/lib/cmake/Qt5Core -DQt5_DIR=${QT_ROOT}/lib/cmake/Qt5 -DQT_QMAKE_EXECUTABLE=${QT_ROOT}/${QT_ROOT}/bin/qmake -DOPENCV_EXTRA_MODULES_PATH=${OSS_SRC_PATH}/opencv-contrib/modules
 
             TEST_COMMAND ""
