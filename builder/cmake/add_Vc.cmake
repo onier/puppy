@@ -21,33 +21,39 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-if (TARGET rttr)
-    set(rttr_INCLUDE_DIRS "${OSS_PREFIX_PATH}/include")
-    set(rttr_LIBRARIES "${OSS_PREFIX_PATH}/lib/librttr_core_d.so")
-    set(rttr_FOUND ON)
+
+if (TARGET Vc)
+    set(Vc_INCLUDE_DIRS "${OSS_PREFIX_PATH}/include")
+    set(Vc_LIBRARIES "${OSS_PREFIX_PATH}/lib/libVc.a")
+    set(Vc_FOUND ON)
     return()
 endif ()
-find_package(rttr QUIET)
-if (${rttr_FOUND})
-    message(STATUS "FOUND rttr ${rttr_LIBRARIES} ${rttr_INCLUDE_DIRS}")
+set(CMAKE_MODULE_PATH ${OSS_PREFIX_PATH}/lib/cmake/Vc ${CMAKE_MODULE_PATH})
+find_package(Vc QUIET)
+include(FindPackageHandleStandardArgs)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(Vc REQUIRED_VARS Vc_LIBRARIES Vc_INCLUDE_DIR)
+if (${Vc_FOUND})
+    set(${Vc_INCLUDE_DIRS} ${Vc_INCLUDE_DIR})
+    message(STATUS "FOUND Vc ${Vc_LIBRARIES} ${Vc_INCLUDE_DIRS}")
 else()
     include(ExternalProject)
     ExternalProject_Add(
-            rttr
-            GIT_REPOSITORY "https://gitee.com/qq2820/rttr.git"
-            GIT_TAG "master"
+            Vc
+            GIT_REPOSITORY "https://gitee.com/qq2820/Vc.git"
+            GIT_TAG "1.4.1"
 
             UPDATE_COMMAND ""
+            GIT_SUBMODULES ""
             PATCH_COMMAND ""
 
-            SOURCE_DIR "${OSS_SRC_PATH}/rttr"
+            SOURCE_DIR "${OSS_SRC_PATH}/Vc"
             CMAKE_ARGS -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX=${OSS_PREFIX_PATH} -DBUILD_UNIT_TESTS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_BENCHMARKS=OFF
 
             TEST_COMMAND ""
     )
-    message(STATUS "build rttr set rttr value") 
-    set(rttr_INCLUDE_DIRS "${OSS_PREFIX_PATH}/include")
-    set(rttr_LIBRARIES "${OSS_PREFIX_PATH}/lib/librttr_core_d.so")
-    set(rttr_FOUND ON)
+    message(STATUS "build Vc set Vc value")
+    set(Vc_INCLUDE_DIRS "${OSS_PREFIX_PATH}/include")
+    set(Vc_LIBRARIES "${OSS_PREFIX_PATH}/lib/libVc.a")
+    set(Vc_FOUND ON)
 endif ()
-include_directories(${rttr_INCLUDE_DIRS})
+include_directories(${Vc_INCLUDE_DIRS})
