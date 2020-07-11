@@ -15,7 +15,7 @@
 #include <QVariantList>
 #include <chrono>
 #include <QtSql/QSqlQuery>
-
+#include "QSqlError"
 namespace puppy {
     namespace common {
 
