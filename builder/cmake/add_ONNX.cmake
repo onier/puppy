@@ -21,33 +21,33 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-if (TARGET rttr)
-    set(rttr_INCLUDE_DIRS "${OSS_PREFIX_PATH}/include")
-    set(rttr_LIBRARIES "${OSS_PREFIX_PATH}/lib/librttr_core_d.so")
-    set(rttr_FOUND ON)
+if (TARGET ONNX)
     return()
 endif ()
-find_package(rttr QUIET)
-if (${rttr_FOUND})
-    message(STATUS "FOUND rttr ${rttr_LIBRARIES} ${rttr_INCLUDE_DIRS}")
-else()
+set(ONNX_DIR ${OSS_PREFIX_PATH}/share/cmake/ONNX/)
+find_package(ONNX REQUIRED)
+if (${ONNX_FOUND})
+    message(STATUS "FOUND ONNX  ${ONNX_LIBRARIES}  ${ONNX_INCLUDE_DIRS}")
+else ()
     include(ExternalProject)
     ExternalProject_Add(
-            rttr
-            GIT_REPOSITORY "https://gitee.com/qq2820/rttr.git"
-            GIT_TAG "master"
+            ONNX
+            GIT_REPOSITORY "https://gitee.com/qq2820/onnx.git"
+            GIT_TAG "v1.6.0"
 
             UPDATE_COMMAND ""
             PATCH_COMMAND ""
-
-            SOURCE_DIR "${OSS_SRC_PATH}/rttr"
-            CMAKE_ARGS -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX=${OSS_PREFIX_PATH} -DBUILD_UNIT_TESTS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_BENCHMARKS=OFF
+            GIT_SUBMODULES ""
+            SOURCE_DIR "${OSS_SRC_PATH}/onnx"
+            CMAKE_ARGS -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX=${OSS_PREFIX_PATH}
 
             TEST_COMMAND ""
     )
-    message(STATUS "build rttr set rttr value") 
-    set(rttr_INCLUDE_DIRS "${OSS_PREFIX_PATH}/include")
-    set(rttr_LIBRARIES "${OSS_PREFIX_PATH}/lib/librttr_core_d.so")
-    set(rttr_FOUND ON)
+    set(ONNX_INCLUDE_DIRS "${OSS_PREFIX_PATH}/include")
+    set(ONNX_LIBRARIES ${OSS_PREFIX_PATH}/lib/libonnx.a
+            ${OSS_PREFIX_PATH}/lib/libonnx_proto.a
+            ${OSS_PREFIX_PATH}/lib/libonnxifi.so
+            ${OSS_PREFIX_PATH}/lib/libonnxifi_dummy.so
+            ${OSS_PREFIX_PATH}/lib/libonnxifi_loader.a)
 endif ()
-include_directories(${rttr_INCLUDE_DIRS})
+include_directories(${onnx_INCLUDE_DIRS})

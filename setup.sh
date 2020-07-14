@@ -1,4 +1,5 @@
 sudo apt install qt5-default libqt5sql5* -y
+sudo apt install libavcodec-dev libavformat-dev libavutil-dev libswscale-dev libavresample-dev libdc1394-22-dev liblapack-dev -y
 #sudo apt-get install git pkg-config make libglu1-mesa-dev freeglut3-dev mesa-common-dev libffi-dev ffmpeg libxml2-dev python-pip -y
 #sudo apt-get install libx11-xcb-dev  python-dev -y
 BASE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"

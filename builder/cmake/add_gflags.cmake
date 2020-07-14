@@ -21,33 +21,38 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-if (TARGET rttr)
-    set(rttr_INCLUDE_DIRS "${OSS_PREFIX_PATH}/include")
-    set(rttr_LIBRARIES "${OSS_PREFIX_PATH}/lib/librttr_core_d.so")
-    set(rttr_FOUND ON)
+if (TARGET gflags)
+    set(gflags_INCLUDE_DIRS "${OSS_PREFIX_PATH}/include")
+    set(gflags_LIBRARIES ${OSS_PREFIX_PATH}/lib/libgflags.so ${OSS_PREFIX_PATH}/lib/libgflags_nothreads.so)
+    set(gflags_FOUND ON)
     return()
 endif ()
-find_package(rttr QUIET)
-if (${rttr_FOUND})
-    message(STATUS "FOUND rttr ${rttr_LIBRARIES} ${rttr_INCLUDE_DIRS}")
-else()
+find_package(gflags QUIET)
+#find_package(gflags REQUIRED)
+if (${gflags_FOUND})
+    message(STATUS "FOUND gflags ${gflags_LIBRARIES} ${gflags_INCLUDE_DIRS}")
+    set(gflags_INCLUDE_DIRS "${OSS_PREFIX_PATH}/include")
+    set(gflags_LIBRARIES ${OSS_PREFIX_PATH}/lib/libgflags.so ${OSS_PREFIX_PATH}/lib/libgflags_nothreads.so)
+    set(gflags_FOUND ON)
+else ()
     include(ExternalProject)
     ExternalProject_Add(
-            rttr
-            GIT_REPOSITORY "https://gitee.com/qq2820/rttr.git"
-            GIT_TAG "master"
+            gflags
+            GIT_REPOSITORY "https://gitee.com/qq2820/gflags.git"
+            GIT_TAG "v2.2.2"
 
             UPDATE_COMMAND ""
             PATCH_COMMAND ""
-
-            SOURCE_DIR "${OSS_SRC_PATH}/rttr"
-            CMAKE_ARGS -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX=${OSS_PREFIX_PATH} -DBUILD_UNIT_TESTS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_BENCHMARKS=OFF
+            GIT_SUBMODULES ""
+            SOURCE_DIR "${OSS_SRC_PATH}/gflags"
+            CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${OSS_PREFIX_PATH} -DBUILD_PYTHON_BINDINGS=OFF -DBUILD_SHARED_LIBS=ON
 
             TEST_COMMAND ""
     )
-    message(STATUS "build rttr set rttr value") 
-    set(rttr_INCLUDE_DIRS "${OSS_PREFIX_PATH}/include")
-    set(rttr_LIBRARIES "${OSS_PREFIX_PATH}/lib/librttr_core_d.so")
-    set(rttr_FOUND ON)
+    set(gflags_INCLUDE_DIRS "${OSS_PREFIX_PATH}/include")
+    set(gflags_LIBRARIES ${OSS_PREFIX_PATH}/lib/libgflags.so ${OSS_PREFIX_PATH}/lib/libgflags_nothreads.so)
+    set(gflags_FOUND ON)
+    message(STATUS "NOT FOUND gflags ${gflags_LIBRARIES} ${gflags_INCLUDE_DIRS}")
 endif ()
-include_directories(${rttr_INCLUDE_DIRS})
+
+include_directories(${gflags_INCLUDE_DIRS})
