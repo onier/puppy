@@ -38,8 +38,11 @@ else()
     include(ExternalProject)
     ExternalProject_Add(
             glog
-            GIT_REPOSITORY "https://gitee.com/qq2820/glog.git"
-            GIT_TAG "v0.3.5"
+#            GIT_REPOSITORY "https://gitee.com/qq2820/glog.git"
+#            GIT_TAG "v0.3.5"
+            #please use the https://gitee.com/qq2820/glog.git url
+            GIT_REPOSITORY "http://192.168.10.7/xuzhenhai/glog"
+            GIT_TAG "master"
 
             UPDATE_COMMAND ""
             PATCH_COMMAND ""
