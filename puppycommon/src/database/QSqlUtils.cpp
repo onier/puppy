@@ -174,4 +174,7 @@ QSqlQuery puppy::common::QSqlUtils::listAllQuery(std::string typeName) {
     return query;
 }
 
+QSqlDatabase puppy::common::QSqlUtils::getQSqlDatabase() {
+    return _dataBase;
+}
 
