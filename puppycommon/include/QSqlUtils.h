@@ -62,7 +62,9 @@ namespace puppy {
             template<class Bean>
             bool saveObject(std::vector<Bean> values) {
                 if (values.size() > 0) {
-                    QSqlQuery query = createAddQuery(values[0]);
+                    std::string primaryKey = "";
+                    bool isAUTOINCREMENT = false;
+                    QSqlQuery query = createAddQuery(values[0], primaryKey, isAUTOINCREMENT);
 
                     QMap<QString, std::shared_ptr<QVariantList>> vars;
                     rttr::type type = values[0].get_type();
@@ -73,7 +75,7 @@ namespace puppy {
 
                     _dataBase.transaction();
                     auto begin = std::chrono::high_resolution_clock::now();
-                    bool b = execAddQuery(query, vars, properties);
+                    bool b = execAddQuery(query, vars, properties,primaryKey,isAUTOINCREMENT);
                     auto end = std::chrono::high_resolution_clock::now();
                     LOG(INFO) << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count()
                               << std::endl;
@@ -152,7 +154,7 @@ namespace puppy {
 
         private:
 
-            QSqlQuery createAddQuery(rttr::instance obj);
+            QSqlQuery createAddQuery(rttr::instance obj, std::string &primaryKey, bool &isAUTOINCREMENT);
 
             QSqlQuery createUpdateQuery(rttr::instance obj, bool &b, std::string &primary_key);
 
@@ -165,7 +167,8 @@ namespace puppy {
 
             bool
             execAddQuery(QSqlQuery query, QMap<QString, std::shared_ptr<QVariantList>> vars,
-                         rttr::array_range<rttr::property> &properties);
+                         rttr::array_range<rttr::property> &properties, std::string &primaryKey,
+                         bool &isAUTOINCREMENT);
 
             bool
             execUpdateQuery(QSqlQuery query, QMap<QString, std::shared_ptr<QVariantList>> vars,

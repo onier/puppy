@@ -26,7 +26,7 @@ QSqlQuery puppy::common::QSqlUtils::createDeleteQuery(rttr::instance obj, std::s
     QSqlQuery query(_dataBase);
     query.prepare(QString::fromStdString(sql));
     _queryMap.insert({queryKey, query});
-    LOG(INFO)<<sql;
+    LOG(INFO) << sql;
     return query;
 }
 
@@ -60,7 +60,10 @@ QSqlQuery puppy::common::QSqlUtils::createUpdateQuery(rttr::instance obj, bool &
     return query;
 }
 
-QSqlQuery puppy::common::QSqlUtils::createAddQuery(rttr::instance type) {
+QSqlQuery
+puppy::common::QSqlUtils::createAddQuery(rttr::instance type, std::string &primaryKey, bool &isAUTOINCREMENT) {
+    primaryKey = type.get_type().get_metadata("PRIMAY_KEY").to_string();
+    isAUTOINCREMENT = type.get_type().get_metadata("AUTO_INCREMENT").to_string() == "true";
     std::string queryKey = "add_";
     queryKey = queryKey + type.get_type().get_name().data();
     if (_queryMap.find(queryKey) != _queryMap.end()) {
@@ -72,6 +75,9 @@ QSqlQuery puppy::common::QSqlUtils::createAddQuery(rttr::instance type) {
     std::string value = "VALUES (";
     sql = sql + tableName + "(";
     for (auto it = properties.begin(); it != properties.end(); it++) {
+        if (isAUTOINCREMENT && it->get_name().to_string() == primaryKey) {
+            continue;
+        }
         sql.append(it->get_name().data()).append(",");
         value.append("?").append(",");
     }
@@ -91,8 +97,13 @@ QSqlQuery puppy::common::QSqlUtils::createAddQuery(rttr::instance type) {
 
 void puppy::common::QSqlUtils::listInstance(rttr::instance obj, rttr::array_range<rttr::property> &properties,
                                             QMap<QString, std::shared_ptr<QVariantList>> &vars) {
+    std::string primaryKey = obj.get_type().get_metadata("PRIMAY_KEY").to_string();
+    bool isAUTOINCREMENT = obj.get_type().get_metadata("AUTO_INCREMENT").to_string() == "true";
     for (auto prop:properties) {
         std::string propertyName = prop.get_name().data();
+        if (isAUTOINCREMENT && primaryKey == propertyName) {
+            continue;
+        }
         std::shared_ptr<QVariantList> list = std::make_shared<QVariantList>();
         if (vars.find(propertyName.data()) == vars.end()) {
             vars.insert(QString::fromStdString(propertyName.data()), list);
@@ -120,8 +131,12 @@ void puppy::common::QSqlUtils::listInstance(rttr::instance obj, rttr::array_rang
 #include <QSqlError>
 
 bool puppy::common::QSqlUtils::execAddQuery(QSqlQuery query, QMap<QString, std::shared_ptr<QVariantList>> vars,
-                                            rttr::array_range<rttr::property> &properties) {
+                                            rttr::array_range<rttr::property> &properties, std::string &primaryKey,
+                                            bool &isAUTOINCREMENT) {
     for (auto prop:properties) {
+        if (prop.get_name() == primaryKey && isAUTOINCREMENT) {
+            continue;
+        }
         std::shared_ptr<QVariantList> list = vars[QString::fromStdString(prop.get_name().data())];
         query.addBindValue(*list);
     }

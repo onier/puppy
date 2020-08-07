@@ -4,6 +4,7 @@
 #pragma once
 
 #include <QSqlDatabase>
+#include "rttr/type.h"
 
 namespace puppy {
     namespace common {
