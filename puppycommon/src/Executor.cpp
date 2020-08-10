@@ -15,7 +15,7 @@ puppy::common::Executor::Executor(int threadCount) {
 }
 
 puppy::common::Executor::~Executor() {
-
+    _io_service->stop();
 }
 
 void puppy::common::Executor::postTask(boost::function<void()> function) {

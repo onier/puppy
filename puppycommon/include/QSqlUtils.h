@@ -73,13 +73,13 @@ namespace puppy {
                         listInstance(b, properties, vars);
                     }
 
-                    _dataBase.transaction();
+//                    _dataBase.transaction();
                     auto begin = std::chrono::high_resolution_clock::now();
                     bool b = execAddQuery(query, vars, properties,primaryKey,isAUTOINCREMENT);
                     auto end = std::chrono::high_resolution_clock::now();
                     LOG(INFO) << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count()
                               << std::endl;
-                    _dataBase.commit();
+//                    _dataBase.commit();
                     return b;
                 } else {
                     LOG(ERROR) << "empty values";
@@ -103,7 +103,7 @@ namespace puppy {
                         listInstance(b, properties, vars);
                     }
 
-                    _dataBase.transaction();
+//                    _dataBase.transaction();
                     auto begin = std::chrono::high_resolution_clock::now();
                     b = execUpdateQuery(query, vars, properties, primary_key);
                     if (!b) {
@@ -112,7 +112,7 @@ namespace puppy {
                     auto end = std::chrono::high_resolution_clock::now();
                     LOG(INFO) << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count()
                               << std::endl;
-                    _dataBase.commit();
+//                    _dataBase.commit();
                     return b;
                 } else {
                     LOG(ERROR) << "empty values";
@@ -133,12 +133,12 @@ namespace puppy {
                         qint64 lvalue = key.get_value(b).to_int64();
                         vars << lvalue;
                     }
-                    _dataBase.transaction();
+//                    _dataBase.transaction();
                     bool b = execDeleteQuery(query, vars);
                     auto end = std::chrono::high_resolution_clock::now();
                     LOG(INFO) << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count()
                               << std::endl;
-                    _dataBase.commit();
+//                    _dataBase.commit();
                     return b;
                 } else {
                     LOG(ERROR) << "empty values";
