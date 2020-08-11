@@ -18,7 +18,7 @@ namespace puppy {
             createQqliteDatabase(std::string name, std::string connectionName);
 
             static bool checkDataBaseExist(std::string host, std::string userName, std::string password,
-                                           std::string database);
+                                           std::string database, std::string connectionName);
 
         };
 

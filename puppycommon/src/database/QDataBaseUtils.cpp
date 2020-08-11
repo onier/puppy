@@ -9,8 +9,8 @@
 #include <QSqlQuery>
 
 bool puppy::common::QDataBaseUtils::checkDataBaseExist(std::string host, std::string userName, std::string password,
-                                                       std::string database) {
-    QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL");
+                                                       std::string database, std::string connectionName) {
+    QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL",connectionName.data());
     db.setHostName(host.data());
     db.setUserName(userName.data());
     db.setDatabaseName(database.data());
@@ -26,7 +26,7 @@ bool puppy::common::QDataBaseUtils::checkDataBaseExist(std::string host, std::st
 QSqlDatabase
 puppy::common::QDataBaseUtils::createMysqlDatabase(std::string host, std::string userName, std::string password,
                                                    std::string database, std::string connectionName) {
-    if (checkDataBaseExist(host, userName, password, database)) {
+    if (checkDataBaseExist(host, userName, password, database,connectionName)) {
         QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL", connectionName.data());
         db.setHostName(host.data());
         db.setUserName(userName.data());
@@ -37,7 +37,7 @@ puppy::common::QDataBaseUtils::createMysqlDatabase(std::string host, std::string
         }
         return db;
     } else {
-        QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL");
+        QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL",connectionName.data());
         db.setHostName(host.data());
         db.setUserName(userName.data());
         db.setPassword(password.data());

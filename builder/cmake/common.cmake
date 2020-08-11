@@ -22,6 +22,9 @@
 # SOFTWARE.
 
 add_definitions("-fext-numeric-literals")
+if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/data)
+    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data/ DESTINATION ${CMAKE_BINARY_DIR}/out/data/)
+endif ()
 #CMP0087 NEW用于指定ExternalProject_Add 默认不更新任何git子模块，必须依赖3.15版本。
 file(RELATIVE_PATH PROJECT_PATH ${PROJECT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
 string(REPLACE "/" "" CURRENT_PROJECT_NAME ${PROJECT_PATH})
