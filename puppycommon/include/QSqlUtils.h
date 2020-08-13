@@ -256,10 +256,10 @@ namespace puppy {
 
         private:
             boost::shared_ptr<puppy::common::Executor> _executor;
-            std::string _host = "192.168.10.236";
-            std::string _name = "root";
-            std::string _password = "cobot";
-            std::string _database = "drug_db";
+            std::string _host;
+            std::string _name;
+            std::string _password;
+            std::string _database;
             boost::atomic_int _index;
         };
     }
