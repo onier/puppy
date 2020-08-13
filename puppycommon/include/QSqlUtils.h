@@ -30,6 +30,8 @@ namespace puppy {
 
             bool update(std::string sql, std::vector<QVariant> vars);
 
+            bool execSql(boost::function<bool(QSqlDatabase)> sqlFunction);
+
             template<class Bean>
             void query(std::string sql, std::vector<QVariant> vars, std::vector<Bean> &values) {
                 auto vbs = _executor->postTask<std::vector<Bean>>([&, sql, vars]() {

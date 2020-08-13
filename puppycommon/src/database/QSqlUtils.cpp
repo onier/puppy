@@ -226,6 +226,7 @@ QSqlQuery puppy::common::QSqlUtils::listAllQuery(std::string typeName) {
 
 void puppy::common::QSqlUtils::checkLocalDataBase() {
     if (!_localDataBase.isOpen() || !_localDataBase.isValid()) {
+        _queryMap.clear();
         std::string name = "mysql" + std::to_string(_index++);
         _localDataBase = puppy::common::QDataBaseUtils::createMysqlDatabase(_host, _name, _password, _database, name);
     }
@@ -254,4 +255,11 @@ bool puppy::common::QSqlUtils::update(std::string sql, std::vector<QVariant> var
         return true;
     });
     return vbs.get();
+}
+
+bool puppy::common::QSqlUtils::execSql(boost::function<bool(QSqlDatabase)> sqlFunction) {
+    auto fb = _executor->postTask<bool>([&, sqlFunction]() {
+        return sqlFunction(_localDataBase);
+    });
+    return fb.get();
 }
