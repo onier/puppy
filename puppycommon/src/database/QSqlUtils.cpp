@@ -226,6 +226,7 @@ QSqlQuery puppy::common::QSqlUtils::listAllQuery(std::string typeName) {
 
 void puppy::common::QSqlUtils::checkLocalDataBase() {
     if (!_localDataBase.isOpen() || !_localDataBase.isValid()) {
+        LOG(INFO) << "_localDataBase need reconnect ";
         _queryMap.clear();
         std::string name = "mysql" + std::to_string(_index++);
         _localDataBase = puppy::common::QDataBaseUtils::createMysqlDatabase(_host, _name, _password, _database, name);
