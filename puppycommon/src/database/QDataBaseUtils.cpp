@@ -9,11 +9,12 @@
 #include <QSqlQuery>
 
 bool puppy::common::QDataBaseUtils::checkDataBaseExist(std::string host, std::string userName, std::string password,
-                                                       std::string database, std::string connectionName) {
+                                                       std::string database, std::string connectionName,int port) {
     QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL",connectionName.data());
     db.setHostName(host.data());
     db.setUserName(userName.data());
     db.setDatabaseName(database.data());
+    db.setPort(port);
     db.setPassword(password.data());
     if (!db.open()) {
         QString error = db.lastError().text();
@@ -25,12 +26,13 @@ bool puppy::common::QDataBaseUtils::checkDataBaseExist(std::string host, std::st
 
 QSqlDatabase
 puppy::common::QDataBaseUtils::createMysqlDatabase(std::string host, std::string userName, std::string password,
-                                                   std::string database, std::string connectionName) {
+                                                   std::string database, std::string connectionName,int port) {
     if (checkDataBaseExist(host, userName, password, database,connectionName)) {
         QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL", connectionName.data());
         db.setHostName(host.data());
         db.setUserName(userName.data());
         db.setDatabaseName(database.data());
+        db.setPort(port);
         db.setPassword(password.data());
         if (!db.open()) {
             throw std::runtime_error("database open fail");
@@ -41,6 +43,7 @@ puppy::common::QDataBaseUtils::createMysqlDatabase(std::string host, std::string
         db.setHostName(host.data());
         db.setUserName(userName.data());
         db.setPassword(password.data());
+        db.setPort(port);
         if (!db.open()) {
             QString error = db.lastError().text();
             LOG(ERROR) << error.toStdString();

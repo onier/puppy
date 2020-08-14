@@ -26,7 +26,8 @@ namespace puppy {
 
         class QSqlUtils {
         public:
-            QSqlUtils(std::string host, std::string database, std::string name, std::string password, int count = 8);
+            QSqlUtils(std::string host, std::string database, std::string name, std::string password, int port = 3306,
+                      int count = 8);
 
             bool update(std::string sql, std::vector<QVariant> vars);
 
@@ -261,6 +262,7 @@ namespace puppy {
             std::string _password;
             std::string _database;
             boost::atomic_int _index;
+            int _port;
         };
     }
 }

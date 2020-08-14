@@ -12,13 +12,13 @@ namespace puppy {
         public:
             static QSqlDatabase
             createMysqlDatabase(std::string host, std::string userName, std::string password, std::string database,
-                                std::string connectionName);
+                                std::string connectionName, int port = 3306);
 
             static QSqlDatabase
             createQqliteDatabase(std::string name, std::string connectionName);
 
             static bool checkDataBaseExist(std::string host, std::string userName, std::string password,
-                                           std::string database, std::string connectionName);
+                                           std::string database, std::string connectionName, int port = 3306);
 
         };
 

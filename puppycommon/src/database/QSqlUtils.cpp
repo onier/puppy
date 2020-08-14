@@ -10,12 +10,14 @@
 #include <JSON.h>
 
 puppy::common::QSqlUtils::QSqlUtils(std::string host, std::string database, std::string name, std::string password,
+                                    int port,
                                     int count) {
     _host = host;
     _name = name;
     _database = database;
     _password = password;
     _index = 0;
+    _port = port;
     _executor = boost::make_shared<puppy::common::Executor>(count);
 }
 
@@ -229,7 +231,8 @@ void puppy::common::QSqlUtils::checkLocalDataBase() {
         LOG(INFO) << "_localDataBase need reconnect ";
         _queryMap.clear();
         std::string name = "mysql" + std::to_string(_index++);
-        _localDataBase = puppy::common::QDataBaseUtils::createMysqlDatabase(_host, _name, _password, _database, name);
+        _localDataBase = puppy::common::QDataBaseUtils::createMysqlDatabase(_host, _name, _password, _database,
+                                                                            name, _port);
     }
 }
 
