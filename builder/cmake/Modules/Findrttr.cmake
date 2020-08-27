@@ -45,5 +45,5 @@ if (${rttr_LIBS_LIBRARIES} STREQUAL "rttr_LIBS_LIBRARIES-NOTFOUND" OR ${rttr_INC
 else ()
     set(rttr_FOUND ON)
     set(rttr_LIBRARIES ${rttr_LIBS_LIBRARIES})
-    set(rttr_INCLUDE_DIR ${rttr_INCS_INCLUDE_DIRS})
+    set(rttr_INCLUDE_DIRS ${rttr_INCS_INCLUDE_DIRS})
 endif ()
