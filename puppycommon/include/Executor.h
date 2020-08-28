@@ -1,6 +1,7 @@
 //
 // Created by xuzhenhai on 2020/3/25.
 //
+
 #include <boost/shared_ptr.hpp>
 #include <boost/make_shared.hpp>
 #include <boost/thread.hpp>
@@ -15,6 +16,20 @@
 
 namespace puppy {
     namespace common {
+        struct Task {
+            Task();
+
+            bool isCancle();
+
+            void cancle();
+
+            void setTimer(boost::shared_ptr<boost::asio::deadline_timer> timer);
+
+        private:
+            boost::atomic_bool _flag;
+            boost::shared_ptr<boost::asio::deadline_timer> _timer;
+        };
+
         class Executor {
         public:
             Executor(int threadCount);
@@ -32,11 +47,14 @@ namespace puppy {
 
             void postTask(boost::function<void()> function);
 
-            void postTimerTaskSecond(boost::function<void()> function, int second = 3);
+            boost::shared_ptr<puppy::common::Task> postTimerTaskSecond(boost::function<void()> function, int second = 3,
+                                     boost::shared_ptr<Task> task = boost::make_shared<Task>());
 
-            void postTimerTaskWithFixRate(boost::function<void()> function, int second = 3);
+            boost::shared_ptr<puppy::common::Task> postTimerTaskWithFixRate(boost::function<void()> function, int second = 3,
+                                          boost::shared_ptr<Task> task = boost::make_shared<Task>());
 
-            void postTimerTaskMilliSecond(boost::function<void()> function, int microsecond = 3);
+            boost::shared_ptr<puppy::common::Task> postTimerTaskMilliSecond(boost::function<void()> function, int microsecond = 3,
+                                          boost::shared_ptr<Task> task = boost::make_shared<Task>());
 
         public:
             boost::shared_ptr<boost::asio::io_service> _io_service;

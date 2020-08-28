@@ -9,6 +9,13 @@
 #include <glog/logging.h>
 #include <JSON.h>
 
+namespace puppy {
+    namespace common {
+        thread_local QSqlDatabase _localDataBase;
+        thread_local std::map<std::string, QSqlQuery> _queryMap;
+    }
+}
+
 puppy::common::QSqlUtils::QSqlUtils(std::string host, std::string database, std::string name, std::string password,
                                     int port,
                                     int count) {
