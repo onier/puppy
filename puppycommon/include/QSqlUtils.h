@@ -20,9 +20,8 @@
 
 namespace puppy {
     namespace common {
-
-        thread_local QSqlDatabase _localDataBase;
-        thread_local std::map<std::string, QSqlQuery> _queryMap;
+        extern thread_local QSqlDatabase _localDataBase;
+        extern thread_local std::map<std::string, QSqlQuery> _queryMap;
 
         class QSqlUtils {
         public:
