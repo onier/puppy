@@ -78,7 +78,7 @@ puppy::common::Executor::postTimerTaskWithFixRate(boost::function<void()> functi
 }
 
 puppy::common::Task::Task() {
-
+    _flag = false;
 }
 
 bool puppy::common::Task::isCancle() {
