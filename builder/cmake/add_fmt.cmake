@@ -21,41 +21,41 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-if (TARGET glog)
-    set(glog_INCLUDE_DIRS "${OSS_PREFIX_PATH}/include")
-    set(glog_LIBRARIES "${OSS_PREFIX_PATH}/lib/libglog.so")
-    set(glog_FOUND ON)
+if (TARGET fmt)
+    set(fmt_INCLUDE_DIRS "${OSS_PREFIX_PATH}/include")
+    set(fmt_LIBRARIES "${OSS_PREFIX_PATH}/lib/libfmt.so")
+    set(fmt_FOUND ON)
     return()
 endif ()
-find_package(glog QUIET)
-#find_package(glog REQUIRED)
-if (${glog_FOUND})
-    message(STATUS "FOUND glog ${glog_LIBRARIES} ${glog_INCLUDE_DIRS}")
-    set(glog_INCLUDE_DIRS "${OSS_PREFIX_PATH}/include")
-    set(glog_LIBRARIES "${OSS_PREFIX_PATH}/lib/libglog.so")
-    set(glog_FOUND ON)
+find_package(fmt QUIET)
+#find_package(fmt REQUIRED)
+if (${fmt_FOUND})
+    message(STATUS "FOUND fmt ${fmt_LIBRARIES} ${fmt_INCLUDE_DIRS}")
+    set(fmt_INCLUDE_DIRS "${OSS_PREFIX_PATH}/include")
+    set(fmt_LIBRARIES "${OSS_PREFIX_PATH}/lib/libfmt.so")
+    set(fmt_FOUND ON)
 else()
     include(ExternalProject)
     ExternalProject_Add(
-            glog
-            GIT_REPOSITORY "https://gitee.com/qq2820/glog.git"
-            GIT_TAG "v0.3.5"
-            #please use the https://gitee.com/qq2820/glog.git url
-#            GIT_REPOSITORY "http://192.168.10.7/xuzhenhai/glog"
-#            GIT_TAG "master"
+            fmt
+            GIT_REPOSITORY "https://gitee.com/qq2820/fmt.git"
+            GIT_TAG "6.1.2"
+            #please use the https://gitee.com/qq2820/fmt.git url
+            #            GIT_REPOSITORY "http://192.168.10.7/xuzhenhai/fmt"
+            #            GIT_TAG "master"
 
             UPDATE_COMMAND ""
             PATCH_COMMAND ""
 
-            SOURCE_DIR "${OSS_SRC_PATH}/glog"
-            CMAKE_ARGS -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX=${OSS_PREFIX_PATH} -DBUILD_PYTHON_BINDINGS=OFF -DBUILD_SHARED_LIBS=ON
+            SOURCE_DIR "${OSS_SRC_PATH}/fmt"
+            CMAKE_ARGS -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX=${OSS_PREFIX_PATH} -DBUILD_SHARED_LIBS=ON
 
             TEST_COMMAND ""
     )
-    set(glog_INCLUDE_DIRS "${OSS_PREFIX_PATH}/include")
-    set(glog_LIBRARIES "${OSS_PREFIX_PATH}/lib/libglog.so")
-    set(glog_FOUND ON)
-    message(STATUS "NOT FOUND glog ${glog_LIBRARIES} ${glog_INCLUDE_DIRS}")
+    set(fmt_INCLUDE_DIRS "${OSS_PREFIX_PATH}/include")
+    set(fmt_LIBRARIES "${OSS_PREFIX_PATH}/lib/libfmt.so")
+    set(fmt_FOUND ON)
+    message(STATUS "NOT FOUND fmt ${fmt_LIBRARIES} ${fmt_INCLUDE_DIRS}")
 endif ()
 
-include_directories(${glog_INCLUDE_DIRS})
+include_directories(${fmt_INCLUDE_DIRS})

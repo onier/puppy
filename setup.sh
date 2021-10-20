@@ -5,6 +5,7 @@ echo $BASE_DIR
 export ARCH=x64
 mkdir -p $BASE_DIR/install/${ARCH}-install/oss/lib/pkgconfig
 mkdir -p $BASE_DIR/install/${ARCH}-install/oss/lib64/pkgconfig
+export CPATH=$BASE_DIR/install/${ARCH}-install/oss/include:$CPATH
 export LD_LIBRARY_PATH=$BASE_DIR/install/${ARCH}-install/oss/lib:$BASE_DIR/install/${ARCH}-install/oss/lib64:$LD_LIBRARY_PATH
 export PKG_CONFIG_PATH=$BASE_DIR/install/${ARCH}-install/oss/lib/pkgconfig:$BASE_DIR/install/${ARCH}-install/oss/lib64/pkgconfig:$PKG_CONFIG_PATH
 export LIBRARY_PATH=$BASE_DIR/install/${ARCH}-install/oss/lib:$BASE_DIR/install/${ARCH}-install/oss/lib64:$LIBRARY_PATH

@@ -21,41 +21,41 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-if (TARGET glog)
-    set(glog_INCLUDE_DIRS "${OSS_PREFIX_PATH}/include")
-    set(glog_LIBRARIES "${OSS_PREFIX_PATH}/lib/libglog.so")
-    set(glog_FOUND ON)
+if (TARGET libevent)
+    set(libevent_INCLUDE_DIRS "${OSS_PREFIX_PATH}/include")
+    set(libevent_LIBRARIES "${OSS_PREFIX_PATH}/lib/libevent.so")
+    set(libevent_FOUND ON)
     return()
 endif ()
-find_package(glog QUIET)
-#find_package(glog REQUIRED)
-if (${glog_FOUND})
-    message(STATUS "FOUND glog ${glog_LIBRARIES} ${glog_INCLUDE_DIRS}")
-    set(glog_INCLUDE_DIRS "${OSS_PREFIX_PATH}/include")
-    set(glog_LIBRARIES "${OSS_PREFIX_PATH}/lib/libglog.so")
-    set(glog_FOUND ON)
+find_package(libevent QUIET)
+#find_package(libevent REQUIRED)
+if (${libevent_FOUND})
+    message(STATUS "FOUND libevent ${libevent_LIBRARIES} ${libevent_INCLUDE_DIRS}")
+    set(libevent_INCLUDE_DIRS "${OSS_PREFIX_PATH}/include")
+    set(libevent_LIBRARIES "${OSS_PREFIX_PATH}/lib/libevent.so")
+    set(libevent_FOUND ON)
 else()
     include(ExternalProject)
     ExternalProject_Add(
-            glog
-            GIT_REPOSITORY "https://gitee.com/qq2820/glog.git"
-            GIT_TAG "v0.3.5"
-            #please use the https://gitee.com/qq2820/glog.git url
-#            GIT_REPOSITORY "http://192.168.10.7/xuzhenhai/glog"
-#            GIT_TAG "master"
+            libevent
+            GIT_REPOSITORY "https://gitee.com/qq2820/libevent.git"
+            GIT_TAG "release-2.1.12-stable"
+            #please use the https://gitee.com/qq2820/libevent.git url
+            #            GIT_REPOSITORY "http://192.168.10.7/xuzhenhai/libevent"
+            #            GIT_TAG "master"
 
             UPDATE_COMMAND ""
             PATCH_COMMAND ""
 
-            SOURCE_DIR "${OSS_SRC_PATH}/glog"
-            CMAKE_ARGS -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX=${OSS_PREFIX_PATH} -DBUILD_PYTHON_BINDINGS=OFF -DBUILD_SHARED_LIBS=ON
+            SOURCE_DIR "${OSS_SRC_PATH}/libevent"
+            CMAKE_ARGS -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX=${OSS_PREFIX_PATH} -DBUILD_SHARED_LIBS=ON
 
             TEST_COMMAND ""
     )
-    set(glog_INCLUDE_DIRS "${OSS_PREFIX_PATH}/include")
-    set(glog_LIBRARIES "${OSS_PREFIX_PATH}/lib/libglog.so")
-    set(glog_FOUND ON)
-    message(STATUS "NOT FOUND glog ${glog_LIBRARIES} ${glog_INCLUDE_DIRS}")
+    set(libevent_INCLUDE_DIRS "${OSS_PREFIX_PATH}/include")
+    set(libevent_LIBRARIES "${OSS_PREFIX_PATH}/lib/libevent.so")
+    set(libevent_FOUND ON)
+    message(STATUS "NOT FOUND libevent ${libevent_LIBRARIES} ${libevent_INCLUDE_DIRS}")
 endif ()
 
-include_directories(${glog_INCLUDE_DIRS})
+include_directories(${libevent_INCLUDE_DIRS})
