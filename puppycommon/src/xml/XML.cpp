@@ -233,7 +233,7 @@ void parseInstance(xercesc::DOMNode *node, rttr::instance obj2) {
             prop.set_value(obj, toStr(node->getTextContent()));
             //字符串或者数字类型直接设置
         } else if (prop.get_type().is_enumeration()) {
-            std::string valueText = attributeValue(node->getAttributes(), "alignment");
+            std::string valueText = attributeValue(node->getAttributes(), propertyName.to_string());
             prop.set_value(obj, prop.get_enumeration().name_to_value(valueText));
         } else if (prop.get_type().get_raw_type().get_name() == "std::string" || prop.get_type().is_arithmetic()) {
             auto typeName = prop.get_type().get_raw_type().get_name();
@@ -429,7 +429,6 @@ std::string XML::toXMLString(rttr::instance variant) {
     std::shared_ptr<xercesc::MemBufFormatTarget> formatTarget = std::shared_ptr<xercesc::MemBufFormatTarget>(
             new xercesc::MemBufFormatTarget());
     out->setByteStream(formatTarget.get());
-    LOG(INFO) << variant.get_type().get_name();
     std::shared_ptr<xercesc::DOMDocument> document = std::shared_ptr<xercesc::DOMDocument>(
             domImplementation->createDocument(0, XStr(
                     variant.get_type().get_name().data()), 0));
