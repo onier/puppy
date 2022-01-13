@@ -25,10 +25,32 @@ SOFTWARE.
 #define PUPPY_XML_H
 
 #include <xercesc/dom/DOMDocument.hpp>
+#include <xercesc/util/XMLString.hpp>
 #include "rttr/registration.h"
+
+class XerceString {
+public :
+    XerceString(const char *const toTranscode) {
+        fUnicodeForm = xercesc::XMLString::transcode(toTranscode);
+    }
+
+    ~XerceString() {
+        xercesc::XMLString::release(&fUnicodeForm);
+    }
+
+    const XMLCh *unicodeForm() const {
+        return fUnicodeForm;
+    }
+
+private :
+    XMLCh *fUnicodeForm;
+};
+
+#define XStr(str) XerceString(str).unicodeForm()
 
 namespace puppy {
     namespace common {
+
         class XML {
         public:
             static rttr::instance parseXMLFile(const std::string &xml);
@@ -36,6 +58,10 @@ namespace puppy {
             static std::vector<rttr::variant> parseXML(const std::string &xml);
 
             static std::string toXMLString(rttr::instance obj);
+
+            static std::string toStr(const XMLCh *xmlch);
+
+            static void parseInstance(xercesc::DOMNode *node, rttr::instance obj2);
 
         };
     }

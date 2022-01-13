@@ -46,7 +46,7 @@ SOFTWARE.
 
 using namespace puppy::common;
 
-std::string toStr(const XMLCh *xmlch) {
+std::string XML::toStr(const XMLCh *xmlch) {
     if (xmlch) {
         char *temp = xercesc::XMLString::transcode(xmlch);
         std::string value(temp);
@@ -56,31 +56,11 @@ std::string toStr(const XMLCh *xmlch) {
     return "        ";
 }
 
-class XerceString {
-public :
-    XerceString(const char *const toTranscode) {
-        fUnicodeForm = xercesc::XMLString::transcode(toTranscode);
-    }
-
-    ~XerceString() {
-        xercesc::XMLString::release(&fUnicodeForm);
-    }
-
-    const XMLCh *unicodeForm() const {
-        return fUnicodeForm;
-    }
-
-private :
-    XMLCh *fUnicodeForm;
-};
-
-#define XStr(str) XerceString(str).unicodeForm()
-
 void getTagsByName(std::string name, xercesc::DOMNode *pNode,
                    std::vector<xercesc::DOMNode *> &pVector) {
     xercesc::DOMNodeList *nodeList = pNode->getChildNodes();
     for (auto index = 0; index < nodeList->getLength(); index++) {
-        if (toStr(nodeList->item(index)->getNodeName()) == name) {
+        if (XML::toStr(nodeList->item(index)->getNodeName()) == name) {
             pVector.push_back(nodeList->item(index));
         }
     }
@@ -89,8 +69,8 @@ void getTagsByName(std::string name, xercesc::DOMNode *pNode,
 std::string attributeValue(xercesc::DOMNamedNodeMap *attributeMap, std::string name) {
     for (size_t size = 0; size < attributeMap->getLength(); size++) {
         xercesc::DOMNode *node = attributeMap->item(size);
-        if (toStr(node->getNodeName()) == name) {
-            return toStr((node->getNodeValue()));
+        if (XML::toStr(node->getNodeName()) == name) {
+            return XML::toStr((node->getNodeValue()));
         }
     }
     return "";
@@ -157,7 +137,7 @@ rttr::variant extract_basic_types(std::string keyType, std::string keyValue) {
 }
 
 
-void parseInstance(xercesc::DOMNode *node, rttr::instance obj2) {
+void XML::parseInstance(xercesc::DOMNode *node, rttr::instance obj2) {
     rttr::instance obj = obj2.get_type().get_raw_type().is_wrapper() ? obj2.get_wrapped_instance() : obj2;
     auto prop_list = obj.get_type().get_properties();
     for (auto prop:prop_list) {
@@ -278,14 +258,14 @@ std::vector<rttr::variant> parseDocument(xercesc::DOMDocument *document) {
     if (document) {
         auto nodes = document->getChildNodes();
         for (auto nodeIndex = 0; nodeIndex < nodes->getLength(); nodeIndex++) {
-            std::string nodeName = toStr(nodes->item(nodeIndex)->getNodeName());
+            std::string nodeName = XML::toStr(nodes->item(nodeIndex)->getNodeName());
             rttr::type nodeType = rttr::type::get_by_name(nodeName);
             if (nodeType.is_valid()) {
                 rttr::variant variant = nodeType.create();
-                parseInstance(nodes->item(nodeIndex), variant);
+                XML::parseInstance(nodes->item(nodeIndex), variant);
                 variants.emplace_back(variant);
             } else {
-                LOG(ERROR) << "invalid xml node " << toStr(nodes->item(nodeIndex)->getNodeName());
+                LOG(ERROR) << "invalid xml node " << XML::toStr(nodes->item(nodeIndex)->getNodeName());
             }
         }
     }
