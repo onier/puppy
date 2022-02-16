@@ -26,13 +26,16 @@ if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/data)
     file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data/ DESTINATION ${CMAKE_BINARY_DIR}/out/data/)
 endif ()
 #CMP0087 NEW用于指定ExternalProject_Add 默认不更新任何git子模块，必须依赖3.15版本。
+if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/data)
+    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data/ DESTINATION ${CMAKE_BINARY_DIR}/out/data/)
+endif ()
 file(RELATIVE_PATH PROJECT_PATH ${PROJECT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
 string(REPLACE "/" "" CURRENT_PROJECT_NAME ${PROJECT_PATH})
 project(${CURRENT_PROJECT_NAME})
 message(STATUS "current project name is ${PROJECT_NAME}")
 #获取当前项目的目录文件名
 cmake_policy(SET CMP0097 NEW)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -pthread")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp -std=c++11 -pthread")
 
 #编译的库和进程的输出目录
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/out/lib)

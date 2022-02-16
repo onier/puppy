@@ -37,13 +37,13 @@ else ()
     ExternalProject_Add(
             assimp
             GIT_REPOSITORY "https://gitee.com/qq2820/assimp.git"
-            GIT_TAG "v5.0.1"
+            GIT_TAG "v3.3.1"
 
             UPDATE_COMMAND ""
             PATCH_COMMAND ""
             GIT_SUBMODULES ""
             SOURCE_DIR "${OSS_SRC_PATH}/assimp"
-            CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${OSS_PREFIX_PATH}
+            CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${OSS_PREFIX_PATH} -DASSIMP_BUILD_TESTS=OFF
 
             TEST_COMMAND ""
     )

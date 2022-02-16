@@ -23,6 +23,7 @@
 
 if (TARGET xerces-c)
     set(xerces-c_INCLUDE_DIRS "${OSS_PREFIX_PATH}/include")
+#    //centos
     set(xerces-c_LIBRARIES "${OSS_PREFIX_PATH}/lib/libxerces-c.so")
     set(xerces-c_FOUND ON)
     return()
@@ -32,6 +33,7 @@ find_package(xerces-c QUIET)
 if (${xerces-c_FOUND})
     message(STATUS "FOUND xerces-c ${xerces-c_LIBRARIES} ${xerces-c_INCLUDE_DIRS}")
     set(xerces-c_INCLUDE_DIRS "${OSS_PREFIX_PATH}/include")
+    #    //centos
     set(xerces-c_LIBRARIES "${OSS_PREFIX_PATH}/lib/libxerces-c.so")
     set(xerces-c_FOUND ON)
 else()

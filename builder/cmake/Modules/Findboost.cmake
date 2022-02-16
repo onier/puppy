@@ -47,7 +47,6 @@ else ()
             ${OSS_PREFIX_PATH}/lib/libboost_chrono.so
             ${OSS_PREFIX_PATH}/lib/libboost_container.so
             ${OSS_PREFIX_PATH}/lib/libboost_context.so
-            ${OSS_PREFIX_PATH}/lib/libboost_contract.so
             ${OSS_PREFIX_PATH}/lib/libboost_coroutine.so
             ${OSS_PREFIX_PATH}/lib/libboost_date_time.so
             ${OSS_PREFIX_PATH}/lib/libboost_filesystem.so
