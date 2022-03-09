@@ -6,7 +6,8 @@
 #include <boost/make_shared.hpp>
 #include <boost/thread.hpp>
 #include <boost/bind.hpp>
-#include <boost/asio.hpp>
+#include <boost/asio/deadline_timer.hpp>
+#include <boost/asio/io_service.hpp>
 #include <iostream>
 #include <unistd.h>
 #include <boost/function.hpp>
