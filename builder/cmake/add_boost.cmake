@@ -65,7 +65,7 @@ if (NOT ${boost_FOUND})
             GIT_REPOSITORY "https://gitee.com/christ_2014/boost.git"
             GIT_TAG "1.66.0"
             UPDATE_COMMAND ""
-            CONFIGURE_COMMAND cd ${OSS_SRC_PATH}/boost && ./bootstrap.sh --prefix=${OSS_PREFIX_PATH}
+            CONFIGURE_COMMAND cd ${OSS_SRC_PATH}/boost && ./bootstrap.sh --prefix=${OSS_PREFIX_PATH} --without-libraries=python
             BUILD_COMMAND cd ${OSS_SRC_PATH}/boost && ./b2 cxxflags='-g' -j2
             INSTALL_COMMAND cd ${OSS_SRC_PATH}/boost && ./b2 install
             SOURCE_DIR "${OSS_SRC_PATH}/boost"
