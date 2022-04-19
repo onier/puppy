@@ -20,8 +20,9 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-
-add_definitions("-fext-numeric-literals")
+if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    add_definitions("-fext-numeric-literals")
+endif ()
 if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/data)
     file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/data/ DESTINATION ${CMAKE_BINARY_DIR}/out/data/)
 endif ()
@@ -56,8 +57,11 @@ set(CMAKE_PREFIX_PATH ${QT_ROOT}/lib/cmake)
 
 #添加当前项目的include
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
-file(GLOB_RECURSE ${PROJECT_NAME}_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/src/*)
-file(GLOB_RECURSE ${PROJECT_NAME}_INCS ${CMAKE_CURRENT_SOURCE_DIR}/include/*)
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
+file(GLOB_RECURSE ${PROJECT_NAME}_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/src/*.c ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/*.CXX)
+file(GLOB_RECURSE ${PROJECT_NAME}_INCS ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h,${CMAKE_CURRENT_SOURCE_DIR}/include/*.hpp)
+file(GLOB_RECURSE ${PROJECT_NAME}_PROTOS ${CMAKE_CURRENT_SOURCE_DIR}/src/*.proto ${CMAKE_CURRENT_SOURCE_DIR}/include/*.proto)
+
 list(LENGTH ${PROJECT_NAME}_INCS INCS_LENGTH)
 list(LENGTH ${PROJECT_NAME}_SRCS SRCS_LENGTH)
 set(${PROJECT_NAME}_VERSION "3")
@@ -82,7 +86,7 @@ if (PKGCONFIG_FOUND)
                 set(${PROJECT_NAME}_DEP_LIBRARIES ${_dep_lib} ${${PROJECT_NAME}_DEP_LIBRARIES})
             else ()
                 pkg_search_module(${_dep} ${_dep})
-                if (${_dep}_FOUND)
+                if (${_dep}_FOUND AND NOT ${_dep} STREQUAL "protobuf")
                     message(STATUS "FOUND ${_dep} as pkgconfig")
                     message(STATUS "    libraries ${${_dep}_LIBRARIES}")
                     message(STATUS "        libraries ${${_dep}_LIBRARY_DIRS}")
@@ -102,6 +106,13 @@ if (PKGCONFIG_FOUND)
         endif ()
     endforeach ()
 endif ()
-
+if (NOT "${${PROJECT_NAME}_PROTOS}" STREQUAL "")
+    set(protobuf_MODULE_COMPATIBLE ON CACHE BOOL "")
+    if (EXISTS ${OSS_PREFIX_PATH}/lib/cmake/protobuf/protobuf-config.cmake)
+        include(${OSS_PREFIX_PATH}/lib/cmake/protobuf/protobuf-config.cmake)
+        protobuf_generate_cpp(${PROJECT_NAME}_PROTO_SRCS ${PROJECT_NAME}_PROTO_HEADERS ${${PROJECT_NAME}_PROTOS})
+        set(${PROJECT_NAME}_DEP_INCLUDE_DIRS  ${CMAKE_CURRENT_BINARY_DIR} ${${PROJECT_NAME}_DEP_INCLUDE_DIRS})
+    endif ()
+endif ()
 #添加依赖头文件路径
 include_directories(${${PROJECT_NAME}_DEP_INCLUDE_DIRS})

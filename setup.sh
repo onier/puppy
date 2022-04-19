@@ -5,6 +5,7 @@ sudo apt install libavcodec-dev libavformat-dev libavutil-dev libswscale-dev lib
 BASE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
 echo $BASE_DIR
 export ARCH=x64
+export PUPPY_DIR=
 mkdir -p $BASE_DIR/install/${ARCH}-install/oss/lib/pkgconfig
 mkdir -p $BASE_DIR/install/${ARCH}-install/oss/lib64/pkgconfig
 export CPATH=$BASE_DIR/install/${ARCH}-install/oss/include:$CPATH
