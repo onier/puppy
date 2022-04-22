@@ -171,7 +171,7 @@ else ()
             CMAKE_ARGS -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX=${OSS_PREFIX_PATH} -DBUILD_TESTING=off
             -DVTK_Group_Qt:BOOL=ON -DVTK_QT_VERSION=5 -DVTK_SMP_IMPLEMENTATION_TYPE=TBB
             -DTBB_INCLUDE_DIRS=${OSS_PREFIX_PATH}/include
-            -DTBB_LIBRARIES="-ltbb;-ltbbmalloc" -DVTK_OPENGL_HAS_EGL=OFF
+            -DTBB_LIBRARIES="-ltbb" -DVTK_OPENGL_HAS_EGL=OFF
     -DModule_PoissonReconstruction:BOOL=ON
             TEST_COMMAND ""
     )
