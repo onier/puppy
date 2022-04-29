@@ -33,7 +33,6 @@ if (${pcl_FOUND})
 else ()
     include(${CMAKE_CURRENT_LIST_DIR}/add_flann.cmake)
     include(${CMAKE_CURRENT_LIST_DIR}/add_boost.cmake)
-    include(${CMAKE_CURRENT_LIST_DIR}/add_eigen3.cmake)
     include(ExternalProject)
     ExternalProject_Add(
             pcl
@@ -42,7 +41,7 @@ else ()
 
             UPDATE_COMMAND ""
             PATCH_COMMAND ""
-            BUILD_COMMAND make -j1
+            BUILD_COMMAND make -j40
             SOURCE_DIR "${OSS_SRC_PATH}/pcl"
             CMAKE_ARGS -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX=${OSS_PREFIX_PATH}
             -DBUILD_PYTHON_BINDINGS=OFF -DCMAKE_CXX_FLAGS="-Wno-implicit-fallthrough"
@@ -55,9 +54,6 @@ else ()
     endif ()
     if (TARGET flann)
         ExternalProject_Add_StepDependencies(pcl build flann)
-    endif ()
-    if (TARGET eigen3)
-        ExternalProject_Add_StepDependencies(pcl build eigen3)
     endif ()
     set(pcl_INCLUDE_DIRS "${OSS_PREFIX_PATH}/include")
     set(pcl_LIBRARIES "")

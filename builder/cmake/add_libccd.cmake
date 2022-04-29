@@ -32,7 +32,6 @@ if (${libccd_FOUND})
     message(STATUS "FOUND libccd ${libccd_INCLUDE_DIRS}  ${libccd_LIBRARIES}")
 else ()
     include(ExternalProject)
-    include(${CMAKE_CURRENT_LIST_DIR}/add_eigen3.cmake)
     ExternalProject_Add(
             libccd
             GIT_REPOSITORY "https://gitee.com/qq2820/libccd.git"
@@ -46,9 +45,6 @@ else ()
 
             TEST_COMMAND ""
     )
-    if (TARGET eigen3)
-        ExternalProject_Add_StepDependencies(libccd build eigen3)
-    endif ()
     set(libccd_INCLUDE_DIRS "${OSS_PREFIX_PATH}/include")
     set(libccd_LIBRARIES "${OSS_PREFIX_PATH}/lib/liblibccd.so")
     set(libccd_FOUND ON)
