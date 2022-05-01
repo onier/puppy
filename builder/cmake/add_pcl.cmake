@@ -41,7 +41,7 @@ else ()
 
             UPDATE_COMMAND ""
             PATCH_COMMAND ""
-            BUILD_COMMAND make -j40
+            BUILD_COMMAND make -j2
             SOURCE_DIR "${OSS_SRC_PATH}/pcl"
             CMAKE_ARGS -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX=${OSS_PREFIX_PATH}
             -DBUILD_PYTHON_BINDINGS=OFF -DCMAKE_CXX_FLAGS="-Wno-implicit-fallthrough"

@@ -23,7 +23,7 @@
 
 if (TARGET libccd)
     set(libccd_INCLUDE_DIRS "${OSS_PREFIX_PATH}/include")
-    set(libccd_LIBRARIES "${OSS_PREFIX_PATH}/lib/liblibccd.so")
+    set(libccd_LIBRARIES "${OSS_PREFIX_PATH}/lib/libccd.so")
     set(libccd_FOUND ON)
     return()
 endif ()
@@ -46,7 +46,7 @@ else ()
             TEST_COMMAND ""
     )
     set(libccd_INCLUDE_DIRS "${OSS_PREFIX_PATH}/include")
-    set(libccd_LIBRARIES "${OSS_PREFIX_PATH}/lib/liblibccd.so")
+    set(libccd_LIBRARIES "${OSS_PREFIX_PATH}/lib/libccd.so")
     set(libccd_FOUND ON)
 endif ()
 include_directories(${libccd_INCLUDE_DIRS})

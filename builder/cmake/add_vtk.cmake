@@ -63,7 +63,7 @@ set(VTK_LIBS ${OSS_PREFIX_PATH}/lib/libvtkChartsCore-8.2.so
         ${OSS_PREFIX_PATH}/lib/libvtkGeovisCore-8.2.so
         ${OSS_PREFIX_PATH}/lib/libvtkgl2ps-8.2.so
         ${OSS_PREFIX_PATH}/lib/libvtkglew-8.2.so
-        ${OSS_PREFIX_PATH}/lib/libvtkGUISupportQt-8.2.so
+	#${OSS_PREFIX_PATH}/lib/libvtkGUISupportQt-8.2.so
         ${OSS_PREFIX_PATH}/lib/libvtkGUISupportQtSQL-8.2.so
         ${OSS_PREFIX_PATH}/lib/libvtkhdf5-8.2.so
         ${OSS_PREFIX_PATH}/lib/libvtkhdf5_hl-8.2.so
