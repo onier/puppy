@@ -88,11 +88,13 @@ RUN git clone https://gitee.com/qq2820/puppy -b arm64
 RUN cd /puppy &&  git clone https://gitee.com/qq2820/Fake
 RUN mkdir /puppy/cmake-build-debug
 RUN cd /puppy/cmake-build-debug && cmake .. -DCMAKE_BUILD_TYPE=debug
-RUN cd /puppy/cmake-build-debug && cmake --build /puppy/cmake-build-debug --target  pcl -- -j1 && rm /oss -rf && cd /puppy/cmake-build-debug && rm * -rf && cmake .. -DCMAKE_BUILD_TYPE=debug
-RUN cd /puppy/cmake-build-debug && make puppycommon && rm /oss -rf && cd /puppy/cmake-build-debug && rm * -rf && cmake .. -DCMAKE_BUILD_TYPE=debug
+#RUN cd /puppy/cmake-build-debug && make puppycommon && rm /oss -rf && cd /puppy/cmake-build-debug && rm * -rf && cmake .. -DCMAKE_BUILD_TYPE=debug
+RUN cd /puppy/cmake-build-debug && cmake --build /puppy/cmake-build-debug --target rttr rapidjson boost xerces-c  glog -- -j 4 && rm /oss -rf && cd /puppy/cmake-build-debug && rm * -rf && cmake .. -DCMAKE_BUILD_TYPE=debug
 RUN cd /puppy/cmake-build-debug && cmake --build /puppy/cmake-build-debug --target folly -- -j 4 && rm /oss -rf && cd /puppy/cmake-build-debug && rm * -rf && cmake .. -DCMAKE_BUILD_TYPE=debug
 RUN cd /puppy/cmake-build-debug && cmake --build /puppy/cmake-build-debug --target opencv -- -j 4 && rm /oss -rf && cd /puppy/cmake-build-debug && rm * -rf && cmake .. -DCMAKE_BUILD_TYPE=debug
 RUN cd /puppy/cmake-build-debug && cmake --build /puppy/cmake-build-debug --target assimp azmq bullet bullet  -- -j4 && rm /oss -rf && cd /puppy/cmake-build-debug && rm * -rf && cmake .. -DCMAKE_BUILD_TYPE=debug
 RUN cd /puppy/cmake-build-debug && rm * -rf && cmake .. -DCMAKE_BUILD_TYPE=debug && rm /oss -rf && cd /puppy/cmake-build-debug && rm * -rf && cmake .. -DCMAKE_BUILD_TYPE=debug
 RUN cd /puppy/cmake-build-debug && cmake --build /puppy/cmake-build-debug --target  mimalloc mstch  -- -j 4 && rm /oss -rf && cd /puppy/cmake-build-debug && rm * -rf && cmake .. -DCMAKE_BUILD_TYPE=debug
 RUN rm /oss -rf && cd /puppy/cmake-build-debug && rm * -rf && cmake .. -DCMAKE_BUILD_TYPE=debug && rm /oss -rf && cd /puppy/cmake-build-debug && rm * -rf && cmake .. -DCMAKE_BUILD_TYPE=debug
+RUN cd /puppy/cmake-build-debug && cmake --build /puppy/cmake-build-debug --target  pcl -- -j1 && rm /oss -rf && cd /puppy/cmake-build-debug && rm * -rf && cmake .. -DCMAKE_BUILD_TYPE=debug
+RUN cd /puppy/cmake-build-debug && cmake --build /puppy/cmake-build-debug --target  protobuf -- -j4 && rm /oss -rf && cd /puppy/cmake-build-debug && rm * -rf && cmake .. -DCMAKE_BUILD_TYPE=debug
