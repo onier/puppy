@@ -37,7 +37,7 @@ else ()
     ExternalProject_Add(
             pcl
             GIT_REPOSITORY "https://gitee.com/qq2820/pcl.git"
-            GIT_TAG "pcl-1.9.1"
+            GIT_TAG "pcl-1.12.0"
 
             UPDATE_COMMAND ""
             PATCH_COMMAND ""
