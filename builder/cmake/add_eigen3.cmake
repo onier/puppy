@@ -34,8 +34,8 @@ else ()
     include(ExternalProject)
     ExternalProject_Add(
             eigen3
-            GIT_REPOSITORY "https://gitee.com/qq2820/eigen-git-mirror.git"
-            GIT_TAG "3.2.10"
+            GIT_REPOSITORY "https://gitee.com/qq2820/eigen.git"
+            GIT_TAG "master"
 
             UPDATE_COMMAND ""
             PATCH_COMMAND ""

@@ -50,13 +50,14 @@ if (${visp_FOUND})
 else ()
     include(ExternalProject)
     include(${CMAKE_CURRENT_LIST_DIR}/add_opencv.cmake)
+    include(${CMAKE_CURRENT_LIST_DIR}/add_eigen3.cmake)
     ExternalProject_Add(
             visp
             GIT_REPOSITORY "https://gitee.com/qq2820/visp.git"
-            GIT_TAG "3.2.0"
+            GIT_TAG "v3.5.0"
 
             SOURCE_DIR "${OSS_SRC_PATH}/visp"
-            CMAKE_ARGS -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX=${OSS_PREFIX_PATH} -DBUILD_SHARED_LIBS=ON -DBUILD_UNIT_TESTS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_BENCHMARKS=OFF
+	    CMAKE_ARGS -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DUSE_CXX11=OFF -DUSE_CXX_STANDARD=14 -DEIGEN3_INCLUDE_DIR=${OSS_PREFIX_PATH}/include/eigen3 -DCMAKE_INSTALL_PREFIX=${OSS_PREFIX_PATH} -DBUILD_SHARED_LIBS=ON -DBUILD_UNIT_TESTS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_BENCHMARKS=OFF
             TEST_COMMAND ""
     )
     set(visp_INCLUDE_DIRS "${OSS_PREFIX_PATH}/include")
@@ -81,6 +82,9 @@ else ()
     if (TARGET opencv)
         ExternalProject_Add_StepDependencies(visp build opencv)
     endif ()
+    if(TARGET eigen3)
+        ExternalProject_Add_StepDependencies(visp build eigen3)
+    endif()
 endif ()
 
 include_directories(${rttr_INCLUDE_DIRS})

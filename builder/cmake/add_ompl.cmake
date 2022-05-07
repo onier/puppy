@@ -38,14 +38,14 @@ else ()
     include(${CMAKE_CURRENT_LIST_DIR}/add_fcl.cmake)
     ExternalProject_Add(
             ompl
-            GIT_REPOSITORY "https://gitee.com/christ_2014/omplapp.git"
-            GIT_TAG "master"
+            GIT_REPOSITORY "https://gitee.com/qq2820/ompl.git"
+            GIT_TAG "1.5.2"
 
             UPDATE_COMMAND ""
             PATCH_COMMAND ""
 #            GIT_SUBMODULES ""
             SOURCE_DIR "${OSS_SRC_PATH}/ompl"
-            CMAKE_ARGS -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX=${OSS_PREFIX_PATH} -DOMPL_BUILD_TESTS=OFF -DBOOST_ROOT=${OSS_PREFIX_PATH}
+	    CMAKE_ARGS -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX=${OSS_PREFIX_PATH} -DEIGEN3_INCLUDE_DIR=${OSS_PREFIX_PATH}/include/eigen3 -DOMPL_BUILD_TESTS=OFF -DBOOST_ROOT=${OSS_PREFIX_PATH}
 
             TEST_COMMAND ""
     )
