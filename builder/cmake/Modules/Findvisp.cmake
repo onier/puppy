@@ -1,4 +1,4 @@
-et(visp_LIBRARIES)
+unset(visp_LIBRARIES)
 find_library(visp_LIBRARIES
 	        NAMES
 		        visp_core
