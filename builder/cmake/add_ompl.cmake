@@ -24,8 +24,6 @@
 if (TARGET ompl)
     set(ompl_INCLUDE_DIRS "${OSS_PREFIX_PATH}/include/ompl-1.5")
     set(ompl_LIBRARIES ${OSS_PREFIX_PATH}/lib/libompl.so
-            ${OSS_PREFIX_PATH}/lib/libompl_app_base.so
-            ${OSS_PREFIX_PATH}/lib/libompl_app.so
             )
     set(ompl_FOUND ON)
     return()
@@ -53,9 +51,6 @@ else ()
         ExternalProject_Add_StepDependencies(ompl build fcl)
     endif ()
     set(ompl_INCLUDE_DIRS "${OSS_PREFIX_PATH}/include/ompl-1.5")
-    set(ompl_LIBRARIES ${OSS_PREFIX_PATH}/lib/libompl.so
-            ${OSS_PREFIX_PATH}/lib/libompl_app_base.so
-            ${OSS_PREFIX_PATH}/lib/libompl_app.so
-            )
+    set(ompl_LIBRARIES ${OSS_PREFIX_PATH}/lib/libompl.so)
 endif ()
 include_directories(${ompl_INCLUDE_DIRS})
