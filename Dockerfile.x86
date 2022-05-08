@@ -1,0 +1,70 @@
+#export DOCKER_BUILDKIT=0 docker build -f Dockerfile.x86 -t puppy-cuda-build.amd64 .
+# Each instruction in this file generates a new layer that gets pushed to your local image cache
+#
+
+#
+# Lines preceeded by # are regarded as comments and ignored
+#
+
+#
+# The line below states we will base our new image on the Latest Official Ubuntu
+FROM ubuntu:18.04
+
+#
+LABEL maintainer="282052309@qq.com"
+LABEL version="0.1"
+LABEL description="This is custom Docker Image for puppy."
+
+RUN  echo 'deb http://mirrors.ustc.edu.cn/ubuntu/ bionic main restricted universe multiverse' > /etc/apt/sources.list
+RUN  echo 'deb-src http://mirrors.ustc.edu.cn/ubuntu/ bionic main restricted universe multiverse' >> /etc/apt/sources.list
+RUN  echo 'deb http://mirrors.ustc.edu.cn/ubuntu/ bionic-security main restricted universe multiverse' >> /etc/apt/sources.list
+RUN  echo 'deb-src http://mirrors.ustc.edu.cn/ubuntu/ bionic-security main restricted universe multiverse' >> /etc/apt/sources.list
+RUN  echo 'deb http://mirrors.ustc.edu.cn/ubuntu/ bionic-updates main restricted universe multiverse' >> /etc/apt/sources.list
+RUN  echo 'deb-src http://mirrors.ustc.edu.cn/ubuntu/ bionic-updates main restricted universe multiverse' >> /etc/apt/sources.list
+RUN  echo 'deb http://mirrors.ustc.edu.cn/ubuntu/ bionic-backports main restricted universe multiverse' >> /etc/apt/sources.list
+RUN  echo 'deb-src http://mirrors.ustc.edu.cn/ubuntu/ bionic-backports main restricted universe multiverse' >> /etc/apt/sources.list
+
+# Update the image to the latest packages
+        RUN apt-get update && apt-get upgrade -y && \
+    apt install qt5-default qttools5-dev-tools libqt5x11extras5-dev libqt5sql5* libavcodec-dev libavformat-dev libavutil-dev libswscale-dev libavresample-dev \
+    libdc1394-22-dev liblapack-dev libxmu-dev libxi-dev git gcc g++ liblzma-dev qttools5-dev libxml2-dev libxt-dev wget make pkg-config build-essential software-properties-common libssl-dev lsb-release gdb -y
+
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 6AF7F09730B3F0A4
+RUN apt-add-repository "deb https://apt.kitware.com/ubuntu/ $(lsb_release -cs) main"
+RUN apt update -y
+RUN apt install cmake -y
+RUN apt install gdb -y
+RUN apt install autoconf libtool libgl1-mesa-dev libglu1-mesa-dev libglu1-mesa-dev freeglut3-dev -y
+RUN DEBIAN_FRONTEND=noninteractive apt-get install keyboard-configuration -y
+COPY cudnn-local-repo-ubuntu1804-8.4.0.27_1.0-1_amd64.deb /tmp
+COPY cuda-repo-ubuntu1804-11-6-local_11.6.2-510.47.03-1_amd64.deb /tmp
+COPY nv-tensorrt-repo-ubuntu1804-cuda11.6-trt8.4.0.6-ea-20220212_1-1_amd64.deb /tmp
+RUN dpkg -i /tmp/*.deb
+RUN apt-key add /var/cuda-repo-ubuntu1804-11-6-local/7fa2af80.pub
+RUN apt-key add /var/cudnn-local-repo-ubuntu1804-8.4.0.27/7fa2af80.pub
+RUN apt-key add /var/nv-tensorrt-repo-ubuntu1804-cuda11.6-trt8.4.0.6-ea-20220212/7fa2af80.pub
+
+RUN apt update && apt install cuda  libcudnn8-dev tensorrt -y
+
+RUN rm -rf /puppy
+RUN git clone https://gitee.com/qq2820/puppy -b amd64_cuda_docker
+RUN cd /puppy &&  git clone https://gitee.com/qq2820/Fake
+RUN mkdir /puppy/cmake-build-debug
+RUN cd /puppy/cmake-build-debug && cmake .. -DCMAKE_BUILD_TYPE=debug
+RUN cd /puppy/cmake-build-debug && cmake --build /puppy/cmake-build-debug --target rttr rapidjson boost xerces-c  glog -- -j 4 && rm /oss -rf && cd /puppy/cmake-build-debug && rm * -rf && cmake .. -DCMAKE_BUILD_TYPE=debug
+RUN cd /puppy/cmake-build-debug && cmake --build /puppy/cmake-build-debug --target folly -- -j 4 && rm /oss -rf && cd /puppy/cmake-build-debug && rm * -rf && cmake .. -DCMAKE_BUILD_TYPE=debug
+RUN cd /puppy/cmake-build-debug && cmake --build /puppy/cmake-build-debug --target opencv pcl -j 4 && rm /oss -rf && cd /puppy/cmake-build-debug && rm * -rf && cmake .. -DCMAKE_BUILD_TYPE=debug
+
+RUN rm -rf /puppy && apt update
+RUN git clone https://gitee.com/qq2820/puppy -b amd64_cuda_docker
+RUN cd /puppy &&  git clone https://gitee.com/qq2820/Fake
+RUN mkdir /puppy/cmake-build-debug
+RUN cd /puppy/cmake-build-debug && cmake .. -DCMAKE_BUILD_TYPE=debug
+RUN cd /puppy/cmake-build-debug && make Fake
+RUN apt install libcurl4-openssl-dev -y
+#RUN cd /puppy/cmake-build-debug && cmake --build /puppy/cmake-build-debug --target assimp azmq bullet bullet  -- -j4 && rm /oss -rf && cd /puppy/cmake-build-debug && rm * -rf && cmake .. -DCMAKE_BUILD_TYPE=debug
+#RUN cd /puppy/cmake-build-debug && rm * -rf && cmake .. -DCMAKE_BUILD_TYPE=debug && rm /oss -rf && cd /puppy/cmake-build-debug && rm * -rf && cmake .. -DCMAKE_BUILD_TYPE=debug
+#RUN cd /puppy/cmake-build-debug && cmake --build /puppy/cmake-build-debug --target  mimalloc mstch  -- -j 4 && rm /oss -rf && cd /puppy/cmake-build-debug && rm * -rf && cmake .. -DCMAKE_BUILD_TYPE=debug
+#RUN rm /oss -rf && cd /puppy/cmake-build-debug && rm * -rf && cmake .. -DCMAKE_BUILD_TYPE=debug && rm /oss -rf && cd /puppy/cmake-build-debug && rm * -rf && cmake .. -DCMAKE_BUILD_TYPE=debug
+#RUN cd /puppy/cmake-build-debug && cmake --build /puppy/cmake-build-debug --target  pcl -- -j1 && rm /oss -rf && cd /puppy/cmake-build-debug && rm * -rf && cmake .. -DCMAKE_BUILD_TYPE=debug
+#RUN cd /puppy/cmake-build-debug && cmake --build /puppy/cmake-build-debug --target  protobuf -- -j4 && rm /oss -rf && cd /puppy/cmake-build-debug && rm * -rf && cmake .. -DCMAKE_BUILD_TYPE=debug
