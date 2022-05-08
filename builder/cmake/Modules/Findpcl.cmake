@@ -33,7 +33,7 @@ find_path(pcl_INCLUDE_DIRS
         NAMES
         pcl/point_cloud.h
         HINTS
-        ${OSS_PREFIX_INC_PATH}/pcl-1.9
+        ${OSS_PREFIX_INC_PATH}/pcl-1.12
         )
 set(pcl_LIBRARIES)
 foreach (pcl_lib IN ITEMS ${pcl_libs})
