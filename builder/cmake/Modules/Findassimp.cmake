@@ -25,7 +25,7 @@ unset(assimp_LIBRARIES)
 
 find_library(assimp_LIBRARIES
         NAMES
-        assimpd
+        assimp
         HINTS
         ${OSS_PREFIX_LIB_PATH}
         )
