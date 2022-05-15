@@ -21,6 +21,7 @@ namespace puppy {
                 auto types = rttr::type::get_types();
                 for (auto &t:types) {
                     if (t.get_metadata("key").to_string() == key) {
+                        LOG(INFO)<<t.get_name();
                         if (name.empty()) {
                             const rttr::variant &var = t.create();
                             values.push_back(var.get_value<std::shared_ptr<T>>());

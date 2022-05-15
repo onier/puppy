@@ -8,7 +8,7 @@
 #include "boost/filesystem.hpp"
 #include "rttr/library.h"
 #include "boost/algorithm/string.hpp"
-
+#include "thread"
 using namespace std;
 using namespace boost::filesystem;
 std::vector<std::shared_ptr<rttr::library>> libraries;
