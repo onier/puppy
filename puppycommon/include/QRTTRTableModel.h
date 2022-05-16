@@ -50,8 +50,15 @@ namespace puppy {
 
             Qt::ItemFlags flags(const QModelIndex &index) const override;
 
+            void setType(rttr::type type);
+
+            std::vector<rttr::property> getProperties() const;
+
+            std::vector<std::string> getTypeNames() const;
+
         private:
             rttr::instance _instance;
+            std::shared_ptr<rttr::type> _type;
 
             friend class RTTRItemDelegate;
         };

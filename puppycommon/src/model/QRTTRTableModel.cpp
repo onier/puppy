@@ -35,27 +35,33 @@ SOFTWARE.
 
 using namespace puppy::common;
 
-std::vector<rttr::property> getProperties(rttr::instance instance) {
+std::vector<rttr::property> QRTTRTableModel::getProperties() const {
     std::vector<rttr::property> result;
-    auto properties = instance.get_type().get_properties();
-    for (auto property:properties) {
-        result.push_back(property);
+    if (_type) {
+        auto properties = _type->get_properties();
+        for (auto property: properties) {
+            result.push_back(property);
+        }
+    } else {
+        auto properties = _instance.get_type().get_properties();
+        for (auto property: properties) {
+            result.push_back(property);
+        }
     }
     return result;
 }
 
-std::vector<std::string> getTypeNames(rttr::instance instance) {
+std::vector<std::string> QRTTRTableModel::getTypeNames() const {
     std::vector<std::string> result;
-    auto properties = instance.get_type().get_properties();
-    for (auto property:properties) {
+    auto properties = getProperties();
+    for (auto property: properties) {
         result.push_back(property.get_name().data());
     }
     return result;
 }
 
-
 int QRTTRTableModel::rowCount(const QModelIndex &parent) const {
-    return getTypeNames(_instance).size();
+    return getTypeNames().size();
 }
 
 int QRTTRTableModel::columnCount(const QModelIndex &parent) const {
@@ -64,7 +70,7 @@ int QRTTRTableModel::columnCount(const QModelIndex &parent) const {
 
 QVariant QRTTRTableModel::data(const QModelIndex &index, int role) const {
     if (role == Qt::DisplayRole) {
-        auto properties = getProperties(_instance);
+        auto properties = getProperties();
         int col = index.column();
         int row = index.row();
         if (col == 0) {
@@ -93,7 +99,7 @@ QVariant QRTTRTableModel::data(const QModelIndex &index, int role) const {
 
 bool QRTTRTableModel::setData(const QModelIndex &index, const QVariant &value, int role) {
     if (role == Qt::EditRole) {
-        auto properties = getProperties(_instance);
+        auto properties = getProperties();
         auto type = properties[index.row()].get_type();
         std::string keyType = type.get_name().data();
         if (keyType == "std::string") {
@@ -117,6 +123,10 @@ bool QRTTRTableModel::setData(const QModelIndex &index, const QVariant &value, i
     return QAbstractItemModel::setData(index, value, role);
 }
 
+void QRTTRTableModel::setType(rttr::type type) {
+    _type = std::make_shared<rttr::type>(type);
+}
+
 QVariant QRTTRTableModel::headerData(int section, Qt::Orientation orientation, int role) const {
     if (role == Qt::DisplayRole && orientation == Qt::Horizontal) {
         switch (section) {
@@ -138,7 +148,7 @@ Qt::ItemFlags QRTTRTableModel::flags(const QModelIndex &index) const {
 
 QWidget *
 RTTRItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const {
-    auto properties = getProperties(_tableModel->_instance);
+    auto properties = (_tableModel->getProperties());
     int row = index.row();
     auto value = properties[index.row()].get_value(_tableModel->_instance);
     if (row < properties.size()) {
@@ -159,7 +169,7 @@ RTTRItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &opti
         } else if (properties[index.row()].is_enumeration()) {
             QComboBox *comboBox = new QComboBox(parent);
             auto names = properties[index.row()].get_enumeration().get_names();
-            for (auto name:names) {
+            for (auto name: names) {
                 comboBox->addItem(name.data());
             }
             return comboBox;
@@ -169,7 +179,7 @@ RTTRItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &opti
 }
 
 void RTTRItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const {
-    auto properties = getProperties(_tableModel->_instance);
+    auto properties = _tableModel->getProperties();
     int row = index.row();
     auto value = properties[index.row()].get_value(_tableModel->_instance);
     if (row < properties.size()) {
@@ -214,7 +224,7 @@ void RTTRItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) 
 }
 
 void RTTRItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const {
-    auto properties = getProperties(_tableModel->_instance);
+    auto properties = _tableModel->getProperties();
     int row = index.row();
     QVariant variant;
     auto value = properties[index.row()].get_value(_tableModel->_instance);
@@ -267,7 +277,7 @@ void RTTRItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionV
 }
 
 void RTTRItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const {
-    auto properties = getProperties(_tableModel->_instance);
+    auto properties = _tableModel->getProperties();
     auto type = properties[index.row()].get_type();
     auto value = properties[index.row()].get_value(_tableModel->_instance);
     std::string keyType = type.get_name().data();
@@ -331,7 +341,7 @@ void RTTRItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
             QComboBox comboBox;
             comboBox.setStyleSheet("QComboBox { border: 0px solid red; } QFrame { border: 0px solid blue; }");
             auto names = properties[index.row()].get_enumeration().get_names();
-            for (auto name:names) {
+            for (auto name: names) {
                 comboBox.addItem(name.data());
             }
             comboBox.setCurrentText(value.to_string().data());

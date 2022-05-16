@@ -19,10 +19,10 @@ namespace puppy {
             std::vector<std::shared_ptr<T>> get(std::string key, std::string name = "") {
                 std::vector<std::shared_ptr<T>> values;
                 auto types = rttr::type::get_types();
-                for (auto &t:types) {
+                for (auto &t: types) {
                     if (t.get_metadata("key").to_string() == key) {
-                        LOG(INFO)<<t.get_name();
                         if (name.empty()) {
+                            LOG(INFO) << t.get_name();
                             const rttr::variant &var = t.create();
                             values.push_back(var.get_value<std::shared_ptr<T>>());
                         } else if (t.get_metadata("name").to_string() == name) {
@@ -33,6 +33,8 @@ namespace puppy {
                 }
                 return values;
             }
+
+            std::vector<rttr::variant> getVarinat(std::string key, std::string name = "");
 
             void loadLibrary(std::string path);
         }
