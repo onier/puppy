@@ -31,12 +31,16 @@ SOFTWARE.
 
 namespace puppy {
     namespace common {
+        typedef std::function<void(int, int)> ValueChangeEvent;
+
         class QRTTRTableModel : public QAbstractTableModel {
         public:
             QRTTRTableModel(rttr::instance instance, QObject *parent = nullptr) : _instance(instance),
                                                                                   QAbstractTableModel(parent) {};
 
             QRTTRTableModel(QObject *parent = nullptr) : QAbstractTableModel(parent) {};
+
+            void addValueChangeEvents(ValueChangeEvent valueChangeEvent);
 
             int rowCount(const QModelIndex &parent) const override;
 
@@ -56,9 +60,13 @@ namespace puppy {
 
             std::vector<std::string> getTypeNames() const;
 
+        protected:
+            void notfyValueChange(int r, int c);
+
         private:
             rttr::instance _instance;
             std::shared_ptr<rttr::type> _type;
+            std::vector<ValueChangeEvent> _valueChangeEvents;
 
             friend class RTTRItemDelegate;
         };

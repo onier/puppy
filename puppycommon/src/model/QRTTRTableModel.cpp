@@ -68,6 +68,16 @@ int QRTTRTableModel::columnCount(const QModelIndex &parent) const {
     return 2;
 }
 
+void QRTTRTableModel::addValueChangeEvents(ValueChangeEvent valueChangeEvent) {
+    _valueChangeEvents.push_back(valueChangeEvent);
+}
+
+void QRTTRTableModel::notfyValueChange(int r, int c) {
+    for (auto ace: _valueChangeEvents) {
+        ace(r, c);
+    }
+}
+
 QVariant QRTTRTableModel::data(const QModelIndex &index, int role) const {
     if (role == Qt::DisplayRole) {
         auto properties = getProperties();
@@ -119,6 +129,7 @@ bool QRTTRTableModel::setData(const QModelIndex &index, const QVariant &value, i
             auto ret = properties[index.row()].set_value(_instance, var);
             LOG(INFO) << "ret  " << ret;
         }
+        notfyValueChange(index.row(),index.column());
     }
     return QAbstractItemModel::setData(index, value, role);
 }
