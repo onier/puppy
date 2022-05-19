@@ -28,204 +28,150 @@ SOFTWARE.
 #include <QtWidgets/QPlainTextEdit>
 #include <QtWidgets/QDoubleSpinBox>
 #include <QtWidgets/QRadioButton>
-#include "QRTTRTableModel.h"
+#include "QRTTRVectorTableModel.h"
 #include "vector"
 #include "glog/logging.h"
 #include "QComboBox"
 
 using namespace puppy::common;
 
-std::vector<rttr::property> QRTTRTableModel::getProperties() const {
-    std::vector<rttr::property> result;
-    if (_variant) {
-        auto properties = _variant->get_type().get_properties();
-        for (auto property: properties) {
-            result.push_back(property);
-        }
-        return result;
-    }
-    if (_type) {
-        auto properties = _type->get_properties();
-        for (auto property: properties) {
-            result.push_back(property);
-        }
-    } else {
-        auto properties = _instance.get_type().get_properties();
-        for (auto property: properties) {
-            result.push_back(property);
-        }
-    }
-    return result;
+int QRTTRVectorTableModel::rowCount(const QModelIndex &parent) const {
+    return _view.get_size();
 }
 
-std::vector<std::string> QRTTRTableModel::getTypeNames() const {
-    std::vector<std::string> result;
-    auto properties = getProperties();
-    for (auto property: properties) {
-        result.push_back(property.get_name().data());
-    }
-    return result;
+int QRTTRVectorTableModel::columnCount(const QModelIndex &parent) const {
+    return _valueType->get_properties().size();
 }
 
-rttr::variant QRTTRTableModel::getVariantValue(rttr::property aProperty) {
-    if (_variant) {
-        return aProperty.get_value(*_variant);
-    } else {
-        return aProperty.get_value(_instance);
-    }
-}
-
-int QRTTRTableModel::rowCount(const QModelIndex &parent) const {
-    return getTypeNames().size();
-}
-
-int QRTTRTableModel::columnCount(const QModelIndex &parent) const {
-    return 2;
-}
-
-void QRTTRTableModel::addValueChangeEvents(ValueChangeEvent valueChangeEvent) {
+void QRTTRVectorTableModel::addValueChangeEvents(ValueChangeEvent valueChangeEvent) {
     _valueChangeEvents.push_back(valueChangeEvent);
 }
 
-void QRTTRTableModel::notfyValueChange(int r, int c) {
+void QRTTRVectorTableModel::notfyValueChange(int r, int c) {
     for (auto ace: _valueChangeEvents) {
         ace(r, c);
     }
 }
 
-QVariant QRTTRTableModel::data(const QModelIndex &index, int role) const {
+QVariant QRTTRVectorTableModel::getData(rttr::property type, rttr::variant variant) const {
+    if (type.is_valid() && variant.is_valid()) {
+        std::string keyType = type.get_type().get_name().data();
+        if (keyType == "std::string") {
+            return type.get_value(variant).to_string().data();
+        } else if (keyType == "double") {
+            return type.get_value(variant).to_double();
+        } else if (keyType == "int") {
+            return type.get_value(variant).to_int();
+        } else if (keyType == "float") {
+            return type.get_value(variant).to_float();
+        } else if (keyType == "long") {
+            return type.get_value(variant).to_int();
+        } else if (keyType == "bool") {
+            return type.get_value(variant).to_bool();
+        } else if (type.is_enumeration()) {
+            return type.get_enumeration().value_to_name(type.get_value(variant)).data();
+        }
+    }
+    return "";
+}
+
+rttr::property QRTTRVectorTableModel::getProperty(int row, int col) const {
+    auto properties = _view.get_value(row).get_type().get_wrapped_type().get_properties();
+//    LOG(INFO) << row << " " << col << "  _view " << _view.get_size() << "  "
+//              << _view.get_value(row).get_type().get_wrapped_type().get_name() << "  "
+//              << _view.get_value(row).get_type().get_wrapped_type().get_properties().size();
+    int n = 0;
+    for (auto &p: properties) {
+        if (n == col) {
+            return p;
+        }
+        n++;
+    }
+}
+
+rttr::variant QRTTRVectorTableModel::getVariant(int row, int col) const {
+    return _variants[row];
+}
+
+QVariant QRTTRVectorTableModel::data(const QModelIndex &index, int role) const {
     if (role == Qt::DisplayRole) {
-        auto properties = getProperties();
         int col = index.column();
         int row = index.row();
-        if (col == 0) {
-            return properties[row].get_name().data();
+        auto prop = getProperty(row, col);
+        auto var = getVariant(row, col);
+        if(col==1){
+            LOG(INFO)<<prop.get_name();
         }
-        std::string keyType = properties[row].get_type().get_name().data();
-        if (keyType == "std::string") {
-            if (_variant) {
-                return properties[row].get_value(*_variant).to_string().data();
-            } else {
-                return properties[row].get_value(_instance).to_string().data();
-            }
-        } else if (keyType == "double") {
-            if (_variant)
-                return properties[row].get_value(*_variant).to_double();
-            else
-                return properties[row].get_value(_instance).to_double();
-        } else if (keyType == "int") {
-            if (_variant)
-                return properties[row].get_value(*_variant).to_int();
-            else
-                return properties[row].get_value(_instance).to_int();
-        } else if (keyType == "float") {
-            if (_variant)
-                return properties[row].get_value(*_variant).to_float();
-            else
-                return properties[row].get_value(_instance).to_float();
-        } else if (keyType == "long") {
-            if (_variant)
-                return properties[row].get_value(*_variant).to_int();
-            else
-                return properties[row].get_value(_instance).to_int();
-        } else if (keyType == "bool") {
-            if (_variant)
-                return properties[row].get_value(*_variant).to_bool();
-            else
-                return properties[row].get_value(_instance).to_bool();
-        } else if (properties[row].is_enumeration()) {
-            if (_variant)
-                return properties[row].get_enumeration().value_to_name(properties[row].get_value(*_variant)).data();
-            else
-                return properties[row].get_enumeration().value_to_name(properties[row].get_value(_instance)).data();
-        }
+        if (prop.is_valid() && var.is_valid()) {
+            auto r = getData(prop, var);
 
+            return r;
+        }
     }
     return QVariant();
 }
 
-bool QRTTRTableModel::setData(const QModelIndex &index, const QVariant &value, int role) {
+bool QRTTRVectorTableModel::setData(const QModelIndex &index, const QVariant &value, int role) {
     if (role == Qt::EditRole) {
-        auto properties = getProperties();
-        auto type = properties[index.row()].get_type();
-        std::string keyType = type.get_name().data();
-        if (keyType == "std::string") {
-            if (_variant)
-                properties[index.row()].set_value(*_variant, value.toString().toStdString());
-            else
-                properties[index.row()].set_value(_instance, value.toString().toStdString());
-        } else if (keyType == "double") {
-            if (_variant)
-                properties[index.row()].set_value(*_variant, value.toDouble());
-            else
-                properties[index.row()].set_value(_instance, value.toDouble());
-        } else if (keyType == "int") {
-            if (_variant)
-                properties[index.row()].set_value(*_variant, value.toInt());
-            else
-                properties[index.row()].set_value(_instance, value.toInt());
-        } else if (keyType == "float") {
-            if (_variant)
-                properties[index.row()].set_value(*_variant, value.toFloat());
-            else
-                properties[index.row()].set_value(_instance, value.toFloat());
-        } else if (keyType == "long") {
-            if (_variant)
-                properties[index.row()].set_value(_variant, value.toLongLong());
-            else
-                properties[index.row()].set_value(_instance, value.toLongLong());
-        } else if (keyType == "bool") {
-            if (_variant)
-                properties[index.row()].set_value(*_variant, value.toBool());
-            else
-                properties[index.row()].set_value(_instance, value.toBool());
-        } else if (properties[index.row()].is_enumeration()) {
-            auto var = properties[index.row()].get_enumeration().name_to_value(value.toString().toStdString().data());
-            if (_variant)
-                auto ret = properties[index.row()].set_value(*_variant, var);
-            else
-                auto ret = properties[index.row()].set_value(_instance, var);
+        int col = index.column();
+        int row = index.row();
+        auto prop = getProperty(row, col);
+        auto var = getVariant(row, col);
+        if (prop.is_valid() && var.is_valid()) {
+            auto type = prop.get_type();
+            std::string keyType = type.get_name().data();
+            if (keyType == "std::string") {
+                LOG(INFO) << value.toString().toStdString() << " " << prop.get_name() << " "
+                          << prop.set_value(var, value.toString().toStdString());;
+            } else if (keyType == "double") {
+                prop.set_value(var, value.toDouble());
+            } else if (keyType == "int") {
+                prop.set_value(var, value.toInt());
+            } else if (keyType == "float") {
+                prop.set_value(var, value.toFloat());
+            } else if (keyType == "long") {
+                prop.set_value(var, value.toLongLong());
+            } else if (keyType == "bool") {
+                LOG(INFO) << var.get_type().get_name() << " " << value.toBool();
+                prop.set_value(var, value.toBool());
+            } else if (prop.is_enumeration()) {
+                auto eunmValue = prop.get_enumeration().name_to_value(value.toString().toStdString().data());
+                prop.set_value(var, eunmValue);
+            }
+            notfyValueChange(index.row(), index.column());
         }
-        notfyValueChange(index.row(), index.column());
     }
     return QAbstractItemModel::setData(index, value, role);
 }
 
-void QRTTRTableModel::setType(rttr::type type) {
+void QRTTRVectorTableModel::setType(rttr::type type) {
     _type = std::make_shared<rttr::type>(type);
 }
 
-QVariant QRTTRTableModel::headerData(int section, Qt::Orientation orientation, int role) const {
+QVariant QRTTRVectorTableModel::headerData(int section, Qt::Orientation orientation, int role) const {
     if (role == Qt::DisplayRole && orientation == Qt::Horizontal) {
-        switch (section) {
-            case 0:
-                return QString("name");
-            case 1:
-                return QString("value");
-        }
+        return _headers[section].data();
     }
     return QVariant();
 }
 
-Qt::ItemFlags QRTTRTableModel::flags(const QModelIndex &index) const {
-    if (index.column() == 1) {
-        int row = index.row();
-        int col = index.column();
-        if (getProperties().at(row).get_type().is_sequential_container()) {
-            return QAbstractTableModel::flags(index);
-        }
-        return Qt::ItemIsEditable | QAbstractTableModel::flags(index);
-    } else
-        return QAbstractTableModel::flags(index);
+Qt::ItemFlags QRTTRVectorTableModel::flags(const QModelIndex &index) const {
+//    if (index.column() == 1)
+//        return Qt::ItemIsEditable | QAbstractTableModel::flags(index);
+//    else
+//        return QAbstractTableModel::flags(index);
+    return Qt::ItemIsEditable | QAbstractTableModel::flags(index);
 }
 
 QWidget *
-RTTRItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const {
-    auto properties = (_tableModel->getProperties());
+RTTRVectorItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option,
+                                     const QModelIndex &index) const {
+    int col = index.column();
     int row = index.row();
-    rttr::variant value = _tableModel->getVariantValue(properties[index.row()]);
-    if (row < properties.size()) {
-        std::string typeName = properties[index.row()].get_type().get_name().data();
+    auto prop = _tableModel->getProperty(row, col);
+    auto value = _tableModel->getVariant(row, col);
+    if (prop.is_valid() && value.is_valid()) {
+        std::string typeName = prop.get_type().get_name().data();
         if (typeName == "std::string") {
             QPlainTextEdit *editor = new QPlainTextEdit(parent);
             return editor;
@@ -239,9 +185,9 @@ RTTRItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &opti
             QComboBox *comboBox = new QComboBox(parent);
             comboBox->addItems({"true", "false"});
             return comboBox;
-        } else if (properties[index.row()].is_enumeration()) {
+        } else if (prop.is_enumeration()) {
             QComboBox *comboBox = new QComboBox(parent);
-            auto names = properties[index.row()].get_enumeration().get_names();
+            auto names = prop.get_enumeration().get_names();
             for (auto name: names) {
                 comboBox->addItem(name.data());
             }
@@ -251,12 +197,13 @@ RTTRItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &opti
     return new QPlainTextEdit(parent);
 }
 
-void RTTRItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const {
-    auto properties = _tableModel->getProperties();
+void RTTRVectorItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const {
+    int col = index.column();
     int row = index.row();
-    auto value = _tableModel->getVariantValue(properties[index.row()]);
-    if (row < properties.size()) {
-        std::string typeName = properties[index.row()].get_type().get_name().data();
+    auto prop = _tableModel->getProperty(row, col);
+    auto value = _tableModel->getVariant(row, col);
+    if (prop.is_valid() && value.is_valid()) {
+        std::string typeName = prop.get_type().get_name().data();
         if (typeName == "std::string") {
             QPlainTextEdit *textEditor = dynamic_cast<QPlainTextEdit *>(editor);
             if (textEditor)
@@ -284,10 +231,10 @@ void RTTRItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) 
             QComboBox *boolEditor = dynamic_cast<QComboBox *>(editor);
             if (boolEditor)
                 if (value.to_bool())
-                    boolEditor->setCurrentText("true");
-                else
                     boolEditor->setCurrentText("false");
-        } else if (properties[index.row()].is_enumeration()) {
+                else
+                    boolEditor->setCurrentText("true");
+        } else if (prop.is_enumeration()) {
             QComboBox *enumEditor = dynamic_cast<QComboBox *>(editor);
             if (enumEditor) {
                 enumEditor->setCurrentText(value.to_string().data());
@@ -296,15 +243,16 @@ void RTTRItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) 
     }
 }
 
-void RTTRItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const {
-    auto properties = _tableModel->getProperties();
+void RTTRVectorItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const {
     int row = index.row();
-    QVariant variant;
-    auto value = _tableModel->getVariantValue(properties[index.row()]);
-    if (row < properties.size()) {
-        std::string typeName = properties[index.row()].get_type().get_name().data();
+    int col = index.column();
+    auto property = _tableModel->getProperty(row, col);
+    QVariant variant = _tableModel->data(index, Qt::DisplayRole);
+    if (property.is_valid()) {
+        std::string typeName = property.get_type().get_name().data();
         if (typeName == "std::string") {
             QPlainTextEdit *textEditor = dynamic_cast<QPlainTextEdit *>(editor);
+            LOG(INFO) << textEditor->toPlainText().toStdString();
             if (textEditor)
                 variant = textEditor->toPlainText();
         } else if (typeName == "double") {
@@ -335,7 +283,7 @@ void RTTRItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, 
                 }
             }
 
-        } else if (properties[index.row()].is_enumeration()) {
+        } else if (property.is_enumeration()) {
             QComboBox *enumEditor = dynamic_cast<QComboBox *>(editor);
             variant = enumEditor->currentText();
 
@@ -344,16 +292,16 @@ void RTTRItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, 
     model->setData(index, variant, Qt::EditRole);
 }
 
-void RTTRItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option,
-                                            const QModelIndex &index) const {
+void RTTRVectorItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option,
+                                                  const QModelIndex &index) const {
     editor->setGeometry(option.rect);
 }
 
-void RTTRItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const {
-    auto properties = _tableModel->getProperties();
-    auto type = properties[index.row()].get_type();
-    auto value = _tableModel->getVariantValue(properties[index.row()]);
-    std::string keyType = type.get_name().data();
+void
+RTTRVectorItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const {
+    auto property = _tableModel->getProperty(index.row(), index.column());
+    auto value = _tableModel->getVariant(index.row(), index.column());
+    std::string keyType = property.get_type().get_name().data();
     if (index.column() == 1) {
         if (keyType == "std::string") {
             QTextEdit edit;
@@ -410,10 +358,10 @@ void RTTRItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
             }
             QPixmap pixmap = comboBox.grab({0, 0, option.rect.width(), option.rect.height()});
             painter->drawPixmap(option.rect, pixmap);
-        } else if (properties[index.row()].is_enumeration()) {
+        } else if (property.is_enumeration()) {
             QComboBox comboBox;
             comboBox.setStyleSheet("QComboBox { border: 0px solid red; } QFrame { border: 0px solid blue; }");
-            auto names = properties[index.row()].get_enumeration().get_names();
+            auto names = property.get_enumeration().get_names();
             for (auto name: names) {
                 comboBox.addItem(name.data());
             }

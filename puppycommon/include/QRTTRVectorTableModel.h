@@ -28,21 +28,30 @@ SOFTWARE.
 #include <QAbstractTableModel>
 #include <QStyledItemDelegate>
 #include "rttr/registration.h"
-
+#include "glog/logging.h"
 namespace puppy {
     namespace common {
         typedef std::function<void(int, int)> ValueChangeEvent;
 
-        class QRTTRTableModel : public QAbstractTableModel {
+        class QRTTRVectorTableModel : public QAbstractTableModel {
         public:
-            QRTTRTableModel(rttr::instance instance, QObject *parent = nullptr) : _instance(instance),
-                                                                                  QAbstractTableModel(parent) {};
 
-            QRTTRTableModel(std::shared_ptr<rttr::variant> variant, QObject *parent = nullptr) : _variant(variant),
-                                                                                                 QAbstractTableModel(
-                                                                                                         parent) {};
+            QRTTRVectorTableModel(std::shared_ptr<rttr::variant> variant, std::shared_ptr<rttr::type> type,
+                                  QObject *parent = nullptr) : _variant(variant), _type(type),
+                                                               QAbstractTableModel(parent) {
+                _view = variant->create_sequential_view();
+                for (auto v:_view) {
+                    _variants.push_back(v);
+                }
+                _valueType = std::make_shared<rttr::type>(_view.get_value_type());
+                LOG(INFO)<<type->get_name() <<"   "<< variant->get_type().get_name() << "  "<<_view.get_value_type().get_name();
 
-            QRTTRTableModel(QObject *parent = nullptr) : QAbstractTableModel(parent) {};
+                for(auto & p : _view.get_value_type().get_properties()){
+                    _headers.push_back(p.get_name().data());
+                }
+            };
+
+            QRTTRVectorTableModel(QObject *parent = nullptr) : QAbstractTableModel(parent) {};
 
             void addValueChangeEvents(ValueChangeEvent valueChangeEvent);
 
@@ -60,27 +69,30 @@ namespace puppy {
 
             void setType(rttr::type type);
 
-            std::vector<rttr::property> getProperties() const;
+            rttr::property getProperty(int row, int col) const;
 
-            std::vector<std::string> getTypeNames() const;
-
-            rttr::variant getVariantValue(rttr::property aProperty);
+            rttr::variant getVariant(int row, int col) const;
 
         protected:
             void notfyValueChange(int r, int c);
 
-        private:
-            rttr::instance _instance;
+            QVariant getData(rttr::property type, rttr::variant variant) const;
+
+        public:
             std::shared_ptr<rttr::variant> _variant;
             std::shared_ptr<rttr::type> _type;
+            std::shared_ptr<rttr::type> _valueType;
             std::vector<ValueChangeEvent> _valueChangeEvents;
-
-            friend class RTTRItemDelegate;
+            rttr::variant_sequential_view _view;
+            std::vector<rttr::variant> _variants;
+            std::vector<std::string> _headers;
+            friend class RTTRVectorItemDelegate;
         };
 
-        class RTTRItemDelegate : public QStyledItemDelegate {
+        class RTTRVectorItemDelegate : public QStyledItemDelegate {
         public:
-            RTTRItemDelegate(QRTTRTableModel *tableModel) : _tableModel(tableModel), QStyledItemDelegate(tableModel) {};
+            RTTRVectorItemDelegate(QRTTRVectorTableModel *tableModel) : _tableModel(tableModel),
+                                                                        QStyledItemDelegate(tableModel) {};
 
             QWidget *
             createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
@@ -95,7 +107,7 @@ namespace puppy {
             void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 
         private:
-            QRTTRTableModel *_tableModel;
+            QRTTRVectorTableModel *_tableModel;
         };
     }
 }
