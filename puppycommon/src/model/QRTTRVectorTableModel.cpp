@@ -36,20 +36,78 @@ SOFTWARE.
 using namespace puppy::common;
 
 int QRTTRVectorTableModel::rowCount(const QModelIndex &parent) const {
-    return _view.get_size();
+    return _containerProperty.get_value(_containerVarinat).create_sequential_view().get_size();
 }
 
 int QRTTRVectorTableModel::columnCount(const QModelIndex &parent) const {
-    return _valueType->get_properties().size();
+    return _containerProperty.get_value(
+            _containerVarinat).create_sequential_view().get_value_type().get_properties().size();
 }
 
 void QRTTRVectorTableModel::addValueChangeEvents(ValueChangeEvent valueChangeEvent) {
     _valueChangeEvents.push_back(valueChangeEvent);
 }
 
-void QRTTRVectorTableModel::notfyValueChange(int r, int c) {
+void QRTTRVectorTableModel::notifyValueChange(int r, int c) {
     for (auto ace: _valueChangeEvents) {
         ace(r, c);
+    }
+}
+
+rttr::property getRTTRProperty(rttr::type type, int i) {
+    int n = 0;
+    auto ps = type.get_properties();
+    for (auto &p: ps) {
+        if (n == i) {
+            return p;
+        }
+        n++;
+    }
+}
+
+void QRTTRVectorTableModel::setVariant(int row, int column, rttr::variant v) {
+    rttr::variant pVar = _containerProperty.get_value(_containerVarinat);
+    rttr::variant_sequential_view pView = pVar.create_sequential_view();
+    auto p = getRTTRProperty(pView.get_value_type(), column);
+    rttr::variant variant = pView.get_value(row);
+    p.set_value(variant, v);
+    _containerProperty.set_value(_containerVarinat, pVar);
+}
+
+rttr::property QRTTRVectorTableModel::getProperty(int row, int column) const {
+    rttr::variant pVar = _containerProperty.get_value(_containerVarinat);
+    rttr::variant_sequential_view pView = pVar.create_sequential_view();
+    return getRTTRProperty(pView.get_value_type(), column);
+}
+
+rttr::variant QRTTRVectorTableModel::getVariant(int row, int column) const {
+    rttr::variant pVar = _containerProperty.get_value(_containerVarinat);
+    rttr::variant_sequential_view pView = pVar.create_sequential_view();
+    auto p = getRTTRProperty(pView.get_value_type(), column);
+    rttr::variant variant = pView.get_value(row);
+    return p.get_value(variant);
+}
+
+void QRTTRVectorTableModel::addNewRow() {
+    rttr::variant pVar = _containerProperty.get_value(_containerVarinat);
+    rttr::variant_sequential_view pView = pVar.create_sequential_view();
+    beginInsertRows(QModelIndex(), pView.get_size(), pView.get_size());
+    pView.set_size(pView.get_size() + 1);
+    _containerProperty.set_value(_containerVarinat, pVar);
+    endInsertRows();
+}
+
+QRTTRVectorTableModel::QRTTRVectorTableModel(rttr::variant &variant, rttr::property &type, QObject *parent)
+        : _containerVarinat(variant),
+          _containerProperty(type),
+          QAbstractTableModel(parent) {
+    if (rowCount({}) == 0) {
+        addNewRow();
+    }
+    auto pros = _containerProperty.get_value(
+            _containerVarinat).create_sequential_view().get_value_type().get_properties();
+    for (auto p: pros) {
+        _headers.push_back(p.get_name().data());
     }
 }
 
@@ -75,36 +133,17 @@ QVariant QRTTRVectorTableModel::getData(rttr::property type, rttr::variant varia
     return "";
 }
 
-rttr::property QRTTRVectorTableModel::getProperty(int row, int col) const {
-    auto properties = _view.get_value(row).get_type().get_wrapped_type().get_properties();
-//    LOG(INFO) << row << " " << col << "  _view " << _view.get_size() << "  "
-//              << _view.get_value(row).get_type().get_wrapped_type().get_name() << "  "
-//              << _view.get_value(row).get_type().get_wrapped_type().get_properties().size();
-    int n = 0;
-    for (auto &p: properties) {
-        if (n == col) {
-            return p;
-        }
-        n++;
-    }
-}
-
-rttr::variant QRTTRVectorTableModel::getVariant(int row, int col) const {
-    return _variants[row];
-}
-
 QVariant QRTTRVectorTableModel::data(const QModelIndex &index, int role) const {
     if (role == Qt::DisplayRole) {
         int col = index.column();
         int row = index.row();
         auto prop = getProperty(row, col);
         auto var = getVariant(row, col);
-        if(col==1){
-            LOG(INFO)<<prop.get_name();
-        }
         if (prop.is_valid() && var.is_valid()) {
             auto r = getData(prop, var);
-
+            if (col == 2) {
+                LOG(INFO) << "getdata " << r.toString().toStdString();
+            }
             return r;
         }
     }
@@ -113,6 +152,7 @@ QVariant QRTTRVectorTableModel::data(const QModelIndex &index, int role) const {
 
 bool QRTTRVectorTableModel::setData(const QModelIndex &index, const QVariant &value, int role) {
     if (role == Qt::EditRole) {
+        LOG(INFO) << value.toString().toStdString() << "  " << index.row() << "  " << index.column();
         int col = index.column();
         int row = index.row();
         auto prop = getProperty(row, col);
@@ -121,31 +161,29 @@ bool QRTTRVectorTableModel::setData(const QModelIndex &index, const QVariant &va
             auto type = prop.get_type();
             std::string keyType = type.get_name().data();
             if (keyType == "std::string") {
-                LOG(INFO) << value.toString().toStdString() << " " << prop.get_name() << " "
-                          << prop.set_value(var, value.toString().toStdString());;
+                setVariant(row, col, value.toString().toStdString());;
             } else if (keyType == "double") {
-                prop.set_value(var, value.toDouble());
+                setVariant(row, col, value.toDouble());
             } else if (keyType == "int") {
-                prop.set_value(var, value.toInt());
+                setVariant(row, col, value.toInt());
             } else if (keyType == "float") {
-                prop.set_value(var, value.toFloat());
+                setVariant(row, col, value.toFloat());
             } else if (keyType == "long") {
-                prop.set_value(var, value.toLongLong());
+                setVariant(row, col, value.toLongLong());
             } else if (keyType == "bool") {
                 LOG(INFO) << var.get_type().get_name() << " " << value.toBool();
-                prop.set_value(var, value.toBool());
+                setVariant(row, col, value.toBool());
             } else if (prop.is_enumeration()) {
                 auto eunmValue = prop.get_enumeration().name_to_value(value.toString().toStdString().data());
-                prop.set_value(var, eunmValue);
+                setVariant(row, col, eunmValue);
             }
-            notfyValueChange(index.row(), index.column());
+            notifyValueChange(index.row(), index.column());
+        }
+        if (row == rowCount({}) - 1) {
+            addNewRow();
         }
     }
     return QAbstractItemModel::setData(index, value, role);
-}
-
-void QRTTRVectorTableModel::setType(rttr::type type) {
-    _type = std::make_shared<rttr::type>(type);
 }
 
 QVariant QRTTRVectorTableModel::headerData(int section, Qt::Orientation orientation, int role) const {
@@ -237,7 +275,7 @@ void RTTRVectorItemDelegate::setEditorData(QWidget *editor, const QModelIndex &i
         } else if (prop.is_enumeration()) {
             QComboBox *enumEditor = dynamic_cast<QComboBox *>(editor);
             if (enumEditor) {
-                enumEditor->setCurrentText(value.to_string().data());
+                enumEditor->setCurrentText((value).to_string().data());
             }
         }
     }
@@ -286,7 +324,6 @@ void RTTRVectorItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *m
         } else if (property.is_enumeration()) {
             QComboBox *enumEditor = dynamic_cast<QComboBox *>(editor);
             variant = enumEditor->currentText();
-
         }
     }
     model->setData(index, variant, Qt::EditRole);
@@ -302,82 +339,81 @@ RTTRVectorItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
     auto property = _tableModel->getProperty(index.row(), index.column());
     auto value = _tableModel->getVariant(index.row(), index.column());
     std::string keyType = property.get_type().get_name().data();
-    if (index.column() == 1) {
-        if (keyType == "std::string") {
-            QTextEdit edit;
-            edit.setFrameStyle(QFrame::NoFrame);
-            edit.setPlainText(value.to_string().data());
-            edit.setFixedWidth(option.rect.width());
-            edit.setFixedHeight(option.rect.height());
+    if (keyType == "std::string") {
+        QTextEdit edit;
+        edit.setFrameStyle(QFrame::NoFrame);
+        edit.setPlainText(value.to_string().data());
+        edit.setFixedWidth(option.rect.width());
+        edit.setFixedHeight(option.rect.height());
 
-            if (option.state & QStyle::State_Selected) {
-                edit.setStyleSheet(
-                        "QTextEdit { border: 0px solid red; background-color: rgba(48, 140, 198,255); } QFrame { border: 0px solid blue; } ");
-            }
-            QPixmap pixmap = edit.grab({0, 0, option.rect.width(), option.rect.height()});
-            painter->drawPixmap(option.rect, pixmap);
-        } else if (keyType == "double" || keyType == "float") {
-            QDoubleSpinBox edit;
-            edit.setValue(value.to_double());
-            edit.setFixedWidth(option.rect.width());
-            edit.setFixedHeight(option.rect.height());
-
-            if (option.state & QStyle::State_Selected) {
-                edit.setStyleSheet(
-                        "QDoubleSpinBox { border: 0px solid red; background-color: rgba(48, 140, 198,255); } QFrame { border: 0px solid blue; } ");
-            }
-            QPixmap pixmap = edit.grab({0, 0, option.rect.width(), option.rect.height()});
-            painter->drawPixmap(option.rect, pixmap);
-        } else if (keyType == "int" || keyType == "long") {
-            QSpinBox edit;
-            edit.setValue(value.to_int());
-            edit.setFixedWidth(option.rect.width());
-            edit.setFixedHeight(option.rect.height());
-
-            if (option.state & QStyle::State_Selected) {
-                edit.setStyleSheet(
-                        "QSpinBox { border: 0px solid red; background-color: rgba(48, 140, 198,255); } QFrame { border: 0px solid blue; } ");
-            }
-            QPixmap pixmap = edit.grab({0, 0, option.rect.width(), option.rect.height()});
-            painter->drawPixmap(option.rect, pixmap);
-        } else if (keyType == "bool") {
-            QComboBox comboBox;
-            comboBox.addItems({"true", "false"});
-            if (value.to_bool()) {
-                comboBox.setCurrentText("true");
-            } else {
-                comboBox.setCurrentText("false");
-            }
-            comboBox.setFixedWidth(option.rect.width());
-            comboBox.setFixedHeight(option.rect.height());
-            if (option.state & QStyle::State_Selected) {
-                comboBox.setStyleSheet(
-                        "QComboBox { border: 0px solid red; background-color: rgba(48, 140, 198,255); } QFrame { border: 0px solid blue; } ");
-            } else {
-                comboBox.setStyleSheet("QComboBox { border: 0px solid red; } QFrame { border: 0px solid blue; } ");
-            }
-            QPixmap pixmap = comboBox.grab({0, 0, option.rect.width(), option.rect.height()});
-            painter->drawPixmap(option.rect, pixmap);
-        } else if (property.is_enumeration()) {
-            QComboBox comboBox;
-            comboBox.setStyleSheet("QComboBox { border: 0px solid red; } QFrame { border: 0px solid blue; }");
-            auto names = property.get_enumeration().get_names();
-            for (auto name: names) {
-                comboBox.addItem(name.data());
-            }
-            comboBox.setCurrentText(value.to_string().data());
-            comboBox.setFixedWidth(option.rect.width());
-            comboBox.setFixedHeight(option.rect.height());
-            if (option.state & QStyle::State_Selected) {
-                comboBox.setStyleSheet(
-                        "QComboBox { border: 0px solid red; background-color: rgba(48, 140, 198,255); } QFrame { border: 0px solid blue; } ");
-            } else {
-                comboBox.setStyleSheet("QComboBox { border: 0px solid red; } QFrame { border: 0px solid blue; } ");
-            }
-            QPixmap pixmap = comboBox.grab({0, 0, option.rect.width(), option.rect.height()});
-            painter->drawPixmap(option.rect, pixmap);
+        if (option.state & QStyle::State_Selected) {
+            edit.setStyleSheet(
+                    "QTextEdit { border: 0px solid red; background-color: rgba(48, 140, 198,255); } QFrame { border: 0px solid blue; } ");
         }
+        QPixmap pixmap = edit.grab({0, 0, option.rect.width(), option.rect.height()});
+        painter->drawPixmap(option.rect, pixmap);
+    } else if (keyType == "double" || keyType == "float") {
+        QDoubleSpinBox edit;
+        edit.setValue(value.to_double());
+        edit.setFixedWidth(option.rect.width());
+        edit.setFixedHeight(option.rect.height());
+
+        if (option.state & QStyle::State_Selected) {
+            edit.setStyleSheet(
+                    "QDoubleSpinBox { border: 0px solid red; background-color: rgba(48, 140, 198,255); } QFrame { border: 0px solid blue; } ");
+        }
+        QPixmap pixmap = edit.grab({0, 0, option.rect.width(), option.rect.height()});
+        painter->drawPixmap(option.rect, pixmap);
+    } else if (keyType == "int" || keyType == "long") {
+        QSpinBox edit;
+        edit.setValue(value.to_int());
+        edit.setFixedWidth(option.rect.width());
+        edit.setFixedHeight(option.rect.height());
+
+        if (option.state & QStyle::State_Selected) {
+            edit.setStyleSheet(
+                    "QSpinBox { border: 0px solid red; background-color: rgba(48, 140, 198,255); } QFrame { border: 0px solid blue; } ");
+        }
+        QPixmap pixmap = edit.grab({0, 0, option.rect.width(), option.rect.height()});
+        painter->drawPixmap(option.rect, pixmap);
+    } else if (keyType == "bool") {
+        QComboBox comboBox;
+        comboBox.addItems({"true", "false"});
+        if (value.to_bool()) {
+            comboBox.setCurrentText("true");
+        } else {
+            comboBox.setCurrentText("false");
+        }
+        comboBox.setFixedWidth(option.rect.width());
+        comboBox.setFixedHeight(option.rect.height());
+        if (option.state & QStyle::State_Selected) {
+            comboBox.setStyleSheet(
+                    "QComboBox { border: 0px solid red; background-color: rgba(48, 140, 198,255); } QFrame { border: 0px solid blue; } ");
+        } else {
+            comboBox.setStyleSheet("QComboBox { border: 0px solid red; } QFrame { border: 0px solid blue; } ");
+        }
+        QPixmap pixmap = comboBox.grab({0, 0, option.rect.width(), option.rect.height()});
+        painter->drawPixmap(option.rect, pixmap);
+    } else if (property.is_enumeration()) {
+        QComboBox comboBox;
+        comboBox.setStyleSheet("QComboBox { border: 0px solid red; } QFrame { border: 0px solid blue; }");
+        auto names = property.get_enumeration().get_names();
+        for (auto name: names) {
+            comboBox.addItem(name.data());
+        }
+        comboBox.setCurrentText(value.to_string().data());
+        comboBox.setFixedWidth(option.rect.width());
+        comboBox.setFixedHeight(option.rect.height());
+        if (option.state & QStyle::State_Selected) {
+            comboBox.setStyleSheet(
+                    "QComboBox { border: 0px solid red; background-color: rgba(48, 140, 198,255); } QFrame { border: 0px solid blue; } ");
+        } else {
+            comboBox.setStyleSheet("QComboBox { border: 0px solid red; } QFrame { border: 0px solid blue; } ");
+        }
+        QPixmap pixmap = comboBox.grab({0, 0, option.rect.width(), option.rect.height()});
+        painter->drawPixmap(option.rect, pixmap);
     } else {
         QStyledItemDelegate::paint(painter, option, index);
     }
+
 }

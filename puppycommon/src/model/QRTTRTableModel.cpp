@@ -35,24 +35,23 @@ SOFTWARE.
 
 using namespace puppy::common;
 
+QRTTRTableModel::~QRTTRTableModel() {
+
+}
+
 std::vector<rttr::property> QRTTRTableModel::getProperties() const {
     std::vector<rttr::property> result;
     if (_variant) {
-        auto properties = _variant->get_type().get_properties();
-        for (auto property: properties) {
-            result.push_back(property);
-        }
-        return result;
-    }
-    if (_type) {
-        auto properties = _type->get_properties();
-        for (auto property: properties) {
-            result.push_back(property);
-        }
-    } else {
-        auto properties = _instance.get_type().get_properties();
-        for (auto property: properties) {
-            result.push_back(property);
+        if (_variant.get_type().is_wrapper()) {
+            auto properties = _variant.get_type().get_wrapped_type().get_properties();
+            for (auto property: properties) {
+                result.push_back(property);
+            }
+        } else {
+            auto properties = _variant.get_type().get_properties();
+            for (auto property: properties) {
+                result.push_back(property);
+            }
         }
     }
     return result;
@@ -67,12 +66,17 @@ std::vector<std::string> QRTTRTableModel::getTypeNames() const {
     return result;
 }
 
-rttr::variant QRTTRTableModel::getVariantValue(rttr::property aProperty) {
-    if (_variant) {
-        return aProperty.get_value(*_variant);
-    } else {
-        return aProperty.get_value(_instance);
-    }
+rttr::variant QRTTRTableModel::getVariantValue(int row, int col) {
+    return getProperties().at(row).get_value(_variant);
+}
+
+void QRTTRTableModel::setVariant(rttr::variant &variant) {
+    beginResetModel();
+    _variant = variant;
+    LOG(INFO) << variant.is_valid() << "  " << variant.get_type().get_name() << "  " << variant.get_type().is_wrapper()
+            << "  " << variant.get_type().get_wrapped_type().get_name()
+              << "  " << variant.get_type().get_wrapped_type().get_properties().size();
+    endResetModel();
 }
 
 int QRTTRTableModel::rowCount(const QModelIndex &parent) const {
@@ -103,41 +107,19 @@ QVariant QRTTRTableModel::data(const QModelIndex &index, int role) const {
         }
         std::string keyType = properties[row].get_type().get_name().data();
         if (keyType == "std::string") {
-            if (_variant) {
-                return properties[row].get_value(*_variant).to_string().data();
-            } else {
-                return properties[row].get_value(_instance).to_string().data();
-            }
+            return properties[row].get_value(_variant).to_string().data();
         } else if (keyType == "double") {
-            if (_variant)
-                return properties[row].get_value(*_variant).to_double();
-            else
-                return properties[row].get_value(_instance).to_double();
+            return properties[row].get_value(_variant).to_double();
         } else if (keyType == "int") {
-            if (_variant)
-                return properties[row].get_value(*_variant).to_int();
-            else
-                return properties[row].get_value(_instance).to_int();
+            return properties[row].get_value(_variant).to_int();
         } else if (keyType == "float") {
-            if (_variant)
-                return properties[row].get_value(*_variant).to_float();
-            else
-                return properties[row].get_value(_instance).to_float();
+            return properties[row].get_value(_variant).to_float();
         } else if (keyType == "long") {
-            if (_variant)
-                return properties[row].get_value(*_variant).to_int();
-            else
-                return properties[row].get_value(_instance).to_int();
+            return properties[row].get_value(_variant).to_int();
         } else if (keyType == "bool") {
-            if (_variant)
-                return properties[row].get_value(*_variant).to_bool();
-            else
-                return properties[row].get_value(_instance).to_bool();
+            return properties[row].get_value(_variant).to_bool();
         } else if (properties[row].is_enumeration()) {
-            if (_variant)
-                return properties[row].get_enumeration().value_to_name(properties[row].get_value(*_variant)).data();
-            else
-                return properties[row].get_enumeration().value_to_name(properties[row].get_value(_instance)).data();
+            return properties[row].get_enumeration().value_to_name(properties[row].get_value(_variant)).data();
         }
 
     }
@@ -150,58 +132,33 @@ bool QRTTRTableModel::setData(const QModelIndex &index, const QVariant &value, i
         auto type = properties[index.row()].get_type();
         std::string keyType = type.get_name().data();
         if (keyType == "std::string") {
-            if (_variant)
-                properties[index.row()].set_value(*_variant, value.toString().toStdString());
-            else
-                properties[index.row()].set_value(_instance, value.toString().toStdString());
+            properties[index.row()].set_value(_variant, value.toString().toStdString());
         } else if (keyType == "double") {
-            if (_variant)
-                properties[index.row()].set_value(*_variant, value.toDouble());
-            else
-                properties[index.row()].set_value(_instance, value.toDouble());
+            properties[index.row()].set_value(_variant, value.toDouble());
         } else if (keyType == "int") {
-            if (_variant)
-                properties[index.row()].set_value(*_variant, value.toInt());
-            else
-                properties[index.row()].set_value(_instance, value.toInt());
+            properties[index.row()].set_value(_variant, value.toInt());
         } else if (keyType == "float") {
-            if (_variant)
-                properties[index.row()].set_value(*_variant, value.toFloat());
-            else
-                properties[index.row()].set_value(_instance, value.toFloat());
+            properties[index.row()].set_value(_variant, value.toFloat());
         } else if (keyType == "long") {
-            if (_variant)
-                properties[index.row()].set_value(_variant, value.toLongLong());
-            else
-                properties[index.row()].set_value(_instance, value.toLongLong());
+            properties[index.row()].set_value(_variant, value.toLongLong());
         } else if (keyType == "bool") {
-            if (_variant)
-                properties[index.row()].set_value(*_variant, value.toBool());
-            else
-                properties[index.row()].set_value(_instance, value.toBool());
+            properties[index.row()].set_value(_variant, value.toBool());
         } else if (properties[index.row()].is_enumeration()) {
             auto var = properties[index.row()].get_enumeration().name_to_value(value.toString().toStdString().data());
-            if (_variant)
-                auto ret = properties[index.row()].set_value(*_variant, var);
-            else
-                auto ret = properties[index.row()].set_value(_instance, var);
+            auto ret = properties[index.row()].set_value(_variant, var);
         }
         notfyValueChange(index.row(), index.column());
     }
     return QAbstractItemModel::setData(index, value, role);
 }
 
-void QRTTRTableModel::setType(rttr::type type) {
-    _type = std::make_shared<rttr::type>(type);
-}
-
 QVariant QRTTRTableModel::headerData(int section, Qt::Orientation orientation, int role) const {
     if (role == Qt::DisplayRole && orientation == Qt::Horizontal) {
         switch (section) {
             case 0:
-                return QString("name");
+                return QString("Name");
             case 1:
-                return QString("value");
+                return QString("Value");
         }
     }
     return QVariant();
@@ -223,8 +180,8 @@ QWidget *
 RTTRItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const {
     auto properties = (_tableModel->getProperties());
     int row = index.row();
-    rttr::variant value = _tableModel->getVariantValue(properties[index.row()]);
-    if (row < properties.size()) {
+    int col = index.column();
+    if (row < properties.size() && col == 1) {
         std::string typeName = properties[index.row()].get_type().get_name().data();
         if (typeName == "std::string") {
             QPlainTextEdit *editor = new QPlainTextEdit(parent);
@@ -254,8 +211,9 @@ RTTRItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &opti
 void RTTRItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const {
     auto properties = _tableModel->getProperties();
     int row = index.row();
-    auto value = _tableModel->getVariantValue(properties[index.row()]);
-    if (row < properties.size()) {
+    int col = index.column();
+    if (row < properties.size() && col == 1) {
+        auto value = _tableModel->getVariantValue(row, col);
         std::string typeName = properties[index.row()].get_type().get_name().data();
         if (typeName == "std::string") {
             QPlainTextEdit *textEditor = dynamic_cast<QPlainTextEdit *>(editor);
@@ -299,9 +257,10 @@ void RTTRItemDelegate::setEditorData(QWidget *editor, const QModelIndex &index) 
 void RTTRItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const {
     auto properties = _tableModel->getProperties();
     int row = index.row();
+    int col = index.column();
     QVariant variant;
-    auto value = _tableModel->getVariantValue(properties[index.row()]);
-    if (row < properties.size()) {
+    if (row < properties.size() && col == 1) {
+        auto value = _tableModel->getVariantValue(row, col);
         std::string typeName = properties[index.row()].get_type().get_name().data();
         if (typeName == "std::string") {
             QPlainTextEdit *textEditor = dynamic_cast<QPlainTextEdit *>(editor);
@@ -352,9 +311,9 @@ void RTTRItemDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionV
 void RTTRItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const {
     auto properties = _tableModel->getProperties();
     auto type = properties[index.row()].get_type();
-    auto value = _tableModel->getVariantValue(properties[index.row()]);
     std::string keyType = type.get_name().data();
     if (index.column() == 1) {
+        auto value = _tableModel->getVariantValue(index.row(), index.column());
         if (keyType == "std::string") {
             QTextEdit edit;
             edit.setFrameStyle(QFrame::NoFrame);

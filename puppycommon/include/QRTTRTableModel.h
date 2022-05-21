@@ -35,14 +35,11 @@ namespace puppy {
 
         class QRTTRTableModel : public QAbstractTableModel {
         public:
-            QRTTRTableModel(rttr::instance instance, QObject *parent = nullptr) : _instance(instance),
-                                                                                  QAbstractTableModel(parent) {};
+            ~QRTTRTableModel();
 
-            QRTTRTableModel(std::shared_ptr<rttr::variant> variant, QObject *parent = nullptr) : _variant(variant),
-                                                                                                 QAbstractTableModel(
-                                                                                                         parent) {};
-
-            QRTTRTableModel(QObject *parent = nullptr) : QAbstractTableModel(parent) {};
+            QRTTRTableModel(rttr::variant &variant, QObject *parent = nullptr) : _variant(variant),
+                                                                                 QAbstractTableModel(
+                                                                                         parent) {};
 
             void addValueChangeEvents(ValueChangeEvent valueChangeEvent);
 
@@ -58,21 +55,19 @@ namespace puppy {
 
             Qt::ItemFlags flags(const QModelIndex &index) const override;
 
-            void setType(rttr::type type);
-
             std::vector<rttr::property> getProperties() const;
 
             std::vector<std::string> getTypeNames() const;
 
-            rttr::variant getVariantValue(rttr::property aProperty);
+            rttr::variant getVariantValue(int row, int col);
+
+            void setVariant(rttr::variant &variant);
 
         protected:
             void notfyValueChange(int r, int c);
 
-        private:
-            rttr::instance _instance;
-            std::shared_ptr<rttr::variant> _variant;
-            std::shared_ptr<rttr::type> _type;
+        public:
+            rttr::variant _variant;
             std::vector<ValueChangeEvent> _valueChangeEvents;
 
             friend class RTTRItemDelegate;

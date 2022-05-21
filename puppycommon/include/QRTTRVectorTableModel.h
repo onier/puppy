@@ -29,6 +29,7 @@ SOFTWARE.
 #include <QStyledItemDelegate>
 #include "rttr/registration.h"
 #include "glog/logging.h"
+
 namespace puppy {
     namespace common {
         typedef std::function<void(int, int)> ValueChangeEvent;
@@ -36,22 +37,8 @@ namespace puppy {
         class QRTTRVectorTableModel : public QAbstractTableModel {
         public:
 
-            QRTTRVectorTableModel(std::shared_ptr<rttr::variant> variant, std::shared_ptr<rttr::type> type,
-                                  QObject *parent = nullptr) : _variant(variant), _type(type),
-                                                               QAbstractTableModel(parent) {
-                _view = variant->create_sequential_view();
-                for (auto v:_view) {
-                    _variants.push_back(v);
-                }
-                _valueType = std::make_shared<rttr::type>(_view.get_value_type());
-                LOG(INFO)<<type->get_name() <<"   "<< variant->get_type().get_name() << "  "<<_view.get_value_type().get_name();
-
-                for(auto & p : _view.get_value_type().get_properties()){
-                    _headers.push_back(p.get_name().data());
-                }
-            };
-
-            QRTTRVectorTableModel(QObject *parent = nullptr) : QAbstractTableModel(parent) {};
+            QRTTRVectorTableModel(rttr::variant &variant, rttr::property &type,
+                                  QObject *parent = nullptr);
 
             void addValueChangeEvents(ValueChangeEvent valueChangeEvent);
 
@@ -67,25 +54,25 @@ namespace puppy {
 
             Qt::ItemFlags flags(const QModelIndex &index) const override;
 
-            void setType(rttr::type type);
+            void addNewRow();
 
-            rttr::property getProperty(int row, int col) const;
+            void setVariant(int row, int column, rttr::variant v);
 
-            rttr::variant getVariant(int row, int col) const;
+            rttr::variant getVariant(int row, int column) const;
+
+            rttr::property getProperty(int row, int column) const;
 
         protected:
-            void notfyValueChange(int r, int c);
+            void notifyValueChange(int r, int c);
 
             QVariant getData(rttr::property type, rttr::variant variant) const;
 
         public:
-            std::shared_ptr<rttr::variant> _variant;
-            std::shared_ptr<rttr::type> _type;
-            std::shared_ptr<rttr::type> _valueType;
+            rttr::variant _containerVarinat;
+            rttr::property _containerProperty;
             std::vector<ValueChangeEvent> _valueChangeEvents;
-            rttr::variant_sequential_view _view;
-            std::vector<rttr::variant> _variants;
             std::vector<std::string> _headers;
+
             friend class RTTRVectorItemDelegate;
         };
 
