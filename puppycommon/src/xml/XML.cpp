@@ -139,10 +139,12 @@ rttr::variant extract_basic_types(std::string keyType, std::string keyValue) {
 
 void XML::parseInstance(xercesc::DOMNode *node, rttr::instance obj2) {
     rttr::instance obj = obj2.get_type().get_raw_type().is_wrapper() ? obj2.get_wrapped_instance() : obj2;
+    LOG(INFO) << obj.get_type().get_name();
     auto prop_list = obj.get_type().get_properties();
     for (auto prop:prop_list) {
         auto propertyName = prop.get_name();
-        rttr::type propType = rttr::type::get_by_name(propertyName);
+        LOG(INFO) << prop.get_name() << "   " << prop.get_type().get_name() << " " << prop.is_valid() << " "
+                  << puppy::common::XML::toStr(node->getNodeName());
         if (prop.get_type().is_sequential_container()) {
             auto value = prop.get_value(obj);
             auto view = value.create_sequential_view();
@@ -219,6 +221,8 @@ void XML::parseInstance(xercesc::DOMNode *node, rttr::instance obj2) {
             auto typeName = prop.get_type().get_raw_type().get_name();
             xercesc::DOMNamedNodeMap *nodeMap = node->getAttributes();
             for (auto index = 0; index < nodeMap->getLength(); index++) {
+                LOG(INFO) << toStr(nodeMap->item(index)->getNodeName()) << "  "
+                          << toStr(nodeMap->item(index)->getNodeValue());
                 std::string nodeName = toStr(nodeMap->item(index)->getNodeName());
                 if (nodeName == propertyName) {
                     std::string value = toStr(nodeMap->item(index)->getNodeValue());
@@ -243,6 +247,7 @@ void XML::parseInstance(xercesc::DOMNode *node, rttr::instance obj2) {
                 if (propNodes.size() != 1) {
                     LOG(ERROR) << propertyName << " only have one ";
                 } else {
+                    rttr::type propType = rttr::type::get_by_name(prop.get_type().get_name());
                     rttr::variant variant = propType.create();
                     parseInstance(propNodes[0], variant);
                     prop.set_value(obj, variant);
@@ -304,10 +309,12 @@ void createSequentialContainerElement(rttr::variant_sequential_view &view, xerce
 
 }
 
-void createElement(rttr::instance obj2, xercesc::DOMElement *domElement, xercesc::DOMDocument *document) {
-    rttr::instance variant = obj2.get_type().get_raw_type().is_wrapper() ? obj2.get_wrapped_instance() : obj2;
-    auto props = variant.get_type().get_properties();
-    for (auto prop:props) {
+void XML::createElement(rttr::variant variant, xercesc::DOMElement *domElement, xercesc::DOMDocument *document) {
+//    rttr::instance variant = obj2.get_type().get_raw_type().is_wrapper() ? obj2.get_wrapped_instance() : obj2;
+    LOG(INFO) << variant.get_type().get_name() ;
+    for (auto prop:variant.get_type().is_wrapper()
+                   ? variant.get_type().get_wrapped_type().get_raw_type().get_properties()
+                   : variant.get_type().get_properties()) {
         auto propName = prop.get_name();
         if (prop.get_type().is_sequential_container()) {
             auto vars = prop.get_value(variant);
@@ -388,7 +395,9 @@ void createElement(rttr::instance obj2, xercesc::DOMElement *domElement, xercesc
         } else {
             auto var = prop.get_value(variant);
             if (var.operator!=(var.get_type().create())) {
-                auto element = document->createElement(XStr(var.get_type().get_name().data()));
+                LOG(INFO) << " create sub element " << var.get_type().get_name();
+                LOG(INFO) << " create sub element " << propName;
+                auto element = document->createElement(XStr(propName.data()));
                 domElement->appendChild(element);
                 createElement(var, element, document);
             }
@@ -396,7 +405,7 @@ void createElement(rttr::instance obj2, xercesc::DOMElement *domElement, xercesc
     }
 }
 
-std::string XML::toXMLString(rttr::instance variant) {
+std::string XML::toXMLString(rttr::variant &variant) {
     xercesc::XMLPlatformUtils::Initialize();
     xercesc::DOMImplementation *domImplementation =
             xercesc::DOMImplementationRegistry::getDOMImplementation(
@@ -409,9 +418,14 @@ std::string XML::toXMLString(rttr::instance variant) {
     std::shared_ptr<xercesc::MemBufFormatTarget> formatTarget = std::shared_ptr<xercesc::MemBufFormatTarget>(
             new xercesc::MemBufFormatTarget());
     out->setByteStream(formatTarget.get());
+    LOG(INFO) << variant.get_type().get_name();
+    std::string typeName = variant.get_type().get_name().data();
+    if (variant.get_type().is_wrapper()) {
+        typeName = variant.get_type().get_wrapped_type().get_raw_type().get_name().data();
+    }
     std::shared_ptr<xercesc::DOMDocument> document = std::shared_ptr<xercesc::DOMDocument>(
             domImplementation->createDocument(0, XStr(
-                    variant.get_type().get_name().data()), 0));
+                    typeName.data()), 0));
     auto robotElem = document->getDocumentElement();
     createElement(variant, robotElem, document.get());
     document->normalizeDocument();
