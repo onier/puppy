@@ -56,8 +56,8 @@ std::string XML::toStr(const XMLCh *xmlch) {
     return "        ";
 }
 
-void getTagsByName(std::string name, xercesc::DOMNode *pNode,
-                   std::vector<xercesc::DOMNode *> &pVector) {
+void XML::getTagsByName(std::string name, xercesc::DOMNode *pNode,
+                        std::vector<xercesc::DOMNode *> &pVector) {
     xercesc::DOMNodeList *nodeList = pNode->getChildNodes();
     for (auto index = 0; index < nodeList->getLength(); index++) {
         if (XML::toStr(nodeList->item(index)->getNodeName()) == name) {
@@ -66,7 +66,7 @@ void getTagsByName(std::string name, xercesc::DOMNode *pNode,
     }
 }
 
-std::string attributeValue(xercesc::DOMNamedNodeMap *attributeMap, std::string name) {
+std::string XML::attributeValue(xercesc::DOMNamedNodeMap *attributeMap, std::string name) {
     for (size_t size = 0; size < attributeMap->getLength(); size++) {
         xercesc::DOMNode *node = attributeMap->item(size);
         if (XML::toStr(node->getNodeName()) == name) {
@@ -80,11 +80,11 @@ std::vector<xercesc::DOMNode *>
 getListItemsByName(std::string name, xercesc::DOMNode *node) {
     std::vector<xercesc::DOMNode *> listElementNodes;
     std::vector<xercesc::DOMNode *> listNodes;
-    getTagsByName("list", node, listNodes);
+    XML::getTagsByName("list", node, listNodes);
     for (auto listNode:listNodes) {
         xercesc::DOMNamedNodeMap *attributeMap = listNode->getAttributes();
-        if (attributeValue(attributeMap, "name") == name) {
-            getTagsByName(attributeValue(attributeMap, "type"), listNode, listElementNodes);
+        if (XML::attributeValue(attributeMap, "name") == name) {
+            XML::getTagsByName(XML::attributeValue(attributeMap, "type"), listNode, listElementNodes);
             return listElementNodes;
         }
     }
@@ -94,13 +94,13 @@ getListItemsByName(std::string name, xercesc::DOMNode *node) {
 void getMapItemsByName(std::string name, xercesc::DOMNode *node, std::vector<xercesc::DOMNode *> &mapItems,
                        std::string &keyType, std::string &valueType) {
     std::vector<xercesc::DOMNode *> mapNodes;
-    getTagsByName("map", node, mapNodes);
+    XML::getTagsByName("map", node, mapNodes);
     for (auto mapNode:mapNodes) {
         xercesc::DOMNamedNodeMap *attributeMap = mapNode->getAttributes();
-        if (attributeValue(attributeMap, "name") == name) {
-            keyType = attributeValue(attributeMap, "keyType");
-            valueType = attributeValue(attributeMap, "valueType");
-            getTagsByName("item", mapNode, mapItems);
+        if (XML::attributeValue(attributeMap, "name") == name) {
+            keyType = XML::attributeValue(attributeMap, "keyType");
+            valueType = XML::attributeValue(attributeMap, "valueType");
+            XML::getTagsByName("item", mapNode, mapItems);
             return;
         }
     }
@@ -311,7 +311,7 @@ void createSequentialContainerElement(rttr::variant_sequential_view &view, xerce
 
 void XML::createElement(rttr::variant variant, xercesc::DOMElement *domElement, xercesc::DOMDocument *document) {
 //    rttr::instance variant = obj2.get_type().get_raw_type().is_wrapper() ? obj2.get_wrapped_instance() : obj2;
-    LOG(INFO) << variant.get_type().get_name() ;
+    LOG(INFO) << variant.get_type().get_name();
     for (auto prop:variant.get_type().is_wrapper()
                    ? variant.get_type().get_wrapped_type().get_raw_type().get_properties()
                    : variant.get_type().get_properties()) {

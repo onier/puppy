@@ -63,6 +63,11 @@ namespace puppy {
 
             static std::string toStr(const XMLCh *xmlch);
 
+            static void getTagsByName(std::string name, xercesc::DOMNode *pNode,
+                                      std::vector<xercesc::DOMNode *> &pVector);
+
+            static std::string attributeValue(xercesc::DOMNamedNodeMap *attributeMap, std::string name);
+
             static void parseInstance(xercesc::DOMNode *node, rttr::instance obj2);
 
             static void
