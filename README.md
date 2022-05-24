@@ -1,4 +1,4 @@
-# puppy 。
+# puppy
 #### 概述
 项目为一个cmake编译工程的项目，会自动下载对应开源项目源码进行编译编译。目前支持azmq sqlitecpp kdl boost eigen3  flann glog opencv pcl rapidjson rttr tbb vtk assimp bullet coin fck flann kdl libccd libxslt mstch nlopt odb ode ompl pqp rapidjson rl solid3等。
 
