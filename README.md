@@ -18,3 +18,14 @@ cmake .. -
 make 
 
 第一次编译需要联网下载对应的开源代码编译，根据你使用的库可能需要比较长的编译时间请耐心等待.
+
+ [Process](https://github.com/onier/Process/tree/master)   插件化的流程管理软件。
+ 
+ 
+ [Duck](https://github.com/onier/Duck/tree/master)   插件化的流程管理软件。
+ 
+ 
+ 
+ 
+ 
+ 
