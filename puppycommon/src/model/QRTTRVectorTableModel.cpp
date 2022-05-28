@@ -36,7 +36,9 @@ SOFTWARE.
 using namespace puppy::common;
 
 int QRTTRVectorTableModel::rowCount(const QModelIndex &parent) const {
-    return _containerProperty.get_value(_containerVarinat).create_sequential_view().get_size();
+    int size =  _containerProperty.get_value(_containerVarinat).create_sequential_view().get_size();
+    LOG(INFO)<<size;
+    return size;
 }
 
 int QRTTRVectorTableModel::columnCount(const QModelIndex &parent) const {
@@ -80,6 +82,11 @@ rttr::property QRTTRVectorTableModel::getProperty(int row, int column) const {
     return getRTTRProperty(pView.get_value_type(), column);
 }
 
+void QRTTRVectorTableModel::reset() {
+    beginResetModel();
+    endResetModel();
+}
+
 rttr::variant QRTTRVectorTableModel::getVariant(int row, int column) const {
     rttr::variant pVar = _containerProperty.get_value(_containerVarinat);
     rttr::variant_sequential_view pView = pVar.create_sequential_view();
@@ -101,6 +108,18 @@ QRTTRVectorTableModel::QRTTRVectorTableModel(rttr::variant &variant, rttr::prope
         : _containerVarinat(variant),
           _containerProperty(type),
           QAbstractTableModel(parent) {
+    initModel();
+}
+
+void QRTTRVectorTableModel::setValue(rttr::variant &variant, rttr::property &type) {
+    beginResetModel();
+    _containerVarinat = variant;
+    _containerProperty = type;
+    initModel();
+    endResetModel();
+}
+
+void QRTTRVectorTableModel::initModel() {
     if (rowCount({}) == 0) {
         addNewRow();
     }

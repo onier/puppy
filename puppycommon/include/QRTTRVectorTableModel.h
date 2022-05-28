@@ -40,6 +40,8 @@ namespace puppy {
             QRTTRVectorTableModel(rttr::variant &variant, rttr::property &type,
                                   QObject *parent = nullptr);
 
+            void setValue(rttr::variant &variant, rttr::property &type);
+
             void addValueChangeEvents(ValueChangeEvent valueChangeEvent);
 
             int rowCount(const QModelIndex &parent) const override;
@@ -62,8 +64,12 @@ namespace puppy {
 
             rttr::property getProperty(int row, int column) const;
 
+            void reset();
+
         protected:
             void notifyValueChange(int r, int c);
+
+            void initModel();
 
             QVariant getData(rttr::property type, rttr::variant variant) const;
 

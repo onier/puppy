@@ -74,14 +74,14 @@ namespace puppy {
             createElement(rttr::variant variant, xercesc::DOMElement *domElement, xercesc::DOMDocument *document);
 
             template<class T>
-            static void
+            static xercesc::DOMElement *
             createElement(rttr::variant variant, xercesc::DOMElement *parent, xercesc::DOMDocument *document,
                           std::shared_ptr<T> tPtr) {
                 //    rttr::instance variant = obj2.get_type().get_raw_type().is_wrapper() ? obj2.get_wrapped_instance() : obj2;
                 LOG(INFO) << tPtr->get_type().get_name();
                 auto domElement = document->createElement(XStr(tPtr->get_type().get_name().data()));
                 parent->appendChild(domElement);
-                for (auto prop:tPtr->get_type().get_properties()) {
+                for (auto prop: tPtr->get_type().get_properties()) {
                     auto propName = prop.get_name();
                     if (prop.get_type().is_sequential_container()) {
                         auto vars = prop.get_value(variant);
@@ -121,7 +121,7 @@ namespace puppy {
                             mapElement->setAttribute(XStr("valueType"),
                                                      XStr(it.get_value().extract_wrapped_value().get_type().get_name().data()));
                             domElement->appendChild(mapElement);
-                            for (auto item:view) {
+                            for (auto item: view) {
 //                    LOG(INFO) << prop.get_name() << "  " << item.first.extract_wrapped_value().get_type().get_name()
 //                              << "  " << item.first.to_string() << "  "
 //                              << item.second.extract_wrapped_value().get_type().get_name() << "  "
@@ -173,6 +173,7 @@ namespace puppy {
                         }
                     }
                 }
+                return domElement;
             };
         };
     }

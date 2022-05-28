@@ -73,9 +73,6 @@ rttr::variant QRTTRTableModel::getVariantValue(int row, int col) {
 void QRTTRTableModel::setVariant(rttr::variant &variant) {
     beginResetModel();
     _variant = variant;
-    LOG(INFO) << variant.is_valid() << "  " << variant.get_type().get_name() << "  " << variant.get_type().is_wrapper()
-            << "  " << variant.get_type().get_wrapped_type().get_name()
-              << "  " << variant.get_type().get_wrapped_type().get_properties().size();
     endResetModel();
 }
 
@@ -124,6 +121,11 @@ QVariant QRTTRTableModel::data(const QModelIndex &index, int role) const {
 
     }
     return QVariant();
+}
+
+void QRTTRTableModel::reset() {
+    beginResetModel();
+    endResetModel();
 }
 
 bool QRTTRTableModel::setData(const QModelIndex &index, const QVariant &value, int role) {

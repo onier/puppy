@@ -63,6 +63,8 @@ namespace puppy {
 
             void setVariant(rttr::variant &variant);
 
+            void reset();
+
         protected:
             void notfyValueChange(int r, int c);
 
