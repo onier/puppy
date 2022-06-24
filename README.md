@@ -23,7 +23,7 @@ make
  [Process](https://github.com/onier/Process/tree/master)   插件化的流程管理软件。
  
  
- [Duck](https://github.com/onier/Duck/tree/master)   插件化的流程管理软件。
+ [Duck](https://github.com/onier/Duck/tree/master)   插件化的websocket。
  
  
  
